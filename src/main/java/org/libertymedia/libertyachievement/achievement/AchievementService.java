@@ -1,8 +1,8 @@
-package org.libertymedia.libertyachievement;
+package org.libertymedia.libertyachievement.achievement;
 
 import lombok.RequiredArgsConstructor;
-import org.libertymedia.libertyachievement.model.AchieveRequest;
-import org.libertymedia.libertyachievement.model.QueryRequest;
+import org.libertymedia.libertyachievement.achievement.model.AchieveRequest;
+import org.libertymedia.libertyachievement.achievement.model.QueryRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

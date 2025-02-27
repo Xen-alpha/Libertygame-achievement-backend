@@ -1,9 +1,11 @@
-package org.libertymedia.libertyachievement;
+package org.libertymedia.libertyachievement.achievement;
 
 import lombok.RequiredArgsConstructor;
-import org.libertymedia.libertyachievement.model.AchieveRequest;
-import org.libertymedia.libertyachievement.model.BaseResponse;
-import org.libertymedia.libertyachievement.model.QueryRequest;
+import org.libertymedia.libertyachievement.achievement.model.AchieveRequest;
+import org.libertymedia.libertyachievement.achievement.model.BaseResponse;
+import org.libertymedia.libertyachievement.achievement.model.QueryRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,15 +16,18 @@ import java.util.List;
 @RequestMapping("/achievement/v0")
 public class AchievementController {
     private final AchievementService achievementService;
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @PostMapping("/addition")
     public ResponseEntity<String> createAchievement(@RequestBody AchieveRequest body) {
+        logger.info("Creating achievement for user {}", body.getUserId());
         achievementService.addAchievement(body);
         return ResponseEntity.ok("도전과제 달성");
     }
 
     @GetMapping("/list/{idx}")
     public ResponseEntity<BaseResponse<List<QueryRequest>>> getAchievements(@PathVariable Long idx) {
+        logger.info("Listing achievement for user {}", idx);
         BaseResponse<List<QueryRequest>> response = BaseResponse.<List<QueryRequest>>builder().success(true).result(achievementService.getAchievements(idx)).build();
         return ResponseEntity.ok(response);
     }

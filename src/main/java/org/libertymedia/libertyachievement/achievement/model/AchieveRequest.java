@@ -1,17 +1,14 @@
-package org.libertymedia.libertyachievement.model;
+package org.libertymedia.libertyachievement.achievement.model;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Builder
-public class QueryListItemResponse {
+public class AchieveRequest {
     private String title;
     private String description;
-    private Integer progress;
-    private Integer maxProgress;
+    private Long userId;
 }
