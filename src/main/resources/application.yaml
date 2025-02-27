@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: LibertyAchievement
+  data:
+    mongodb:
+      uri: mongodb://localhost/achievement
+      port: 27017
+      username: ${MONGODB_USERNAME}
+      password: ${MONGODB_PASSWORD}
