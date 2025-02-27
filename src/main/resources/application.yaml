@@ -3,7 +3,7 @@ spring:
     name: LibertyAchievement
   data:
     mongodb:
-      uri: mongodb://localhost/achievement
+      uri: mongodb://localhost/libertymedia
       port: 27017
       username: ${MONGODB_USERNAME}
       password: ${MONGODB_PASSWORD}
