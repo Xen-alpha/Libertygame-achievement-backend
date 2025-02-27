@@ -13,14 +13,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Document(collection="libertyuser")
 @Builder
-public class UserEntity implements UserDetails {
+public class UserDocument implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         return true;

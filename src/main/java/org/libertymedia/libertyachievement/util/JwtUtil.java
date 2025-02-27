@@ -4,7 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
-import org.libertymedia.libertyachievement.user.model.UserEntity;
+import org.libertymedia.libertyachievement.user.model.UserDocument;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -27,14 +27,14 @@ public class JwtUtil {
         EXP = exp;
     }
 
-    public static UserEntity getUser(String token) {
+    public static UserDocument getUser(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(SECRET)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-            return UserEntity.builder()
+            return UserDocument.builder()
                     .idx(claims.get("userIdx", Long.class))
                     .email(claims.get("userEmail", String.class))
                     .build();

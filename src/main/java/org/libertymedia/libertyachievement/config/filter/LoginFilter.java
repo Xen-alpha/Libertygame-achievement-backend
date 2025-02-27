@@ -1,10 +1,8 @@
 package org.libertymedia.libertyachievement.config.filter;
 
 
-import org.libertymedia.libertyachievement.user.model.UserEntity;
-import org.libertymedia.libertyachievement.user.model.SignupRequest;
+import org.libertymedia.libertyachievement.user.model.UserDocument;
 import org.libertymedia.libertyachievement.util.JwtUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,9 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -27,7 +23,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        UserEntity user = (UserEntity) authResult.getPrincipal();
+        UserDocument user = (UserDocument) authResult.getPrincipal();
         String jwtToken = JwtUtil.generateToken(user.getIdx(), user.getUsername());
 
         ResponseCookie cookie = ResponseCookie

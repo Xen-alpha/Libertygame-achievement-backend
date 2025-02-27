@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Getter
 @Builder
-@Document
+@Document(collection="achievement")
 public class AchievementDocument {
     @Id
     private Long idx;

@@ -9,9 +9,9 @@ import java.util.Collection;
 import java.util.Map;
 
 public class LibertyOAuth2User implements OAuth2User {
-    private UserEntity user;
+    private UserDocument user;
 
-    public LibertyOAuth2User(UserEntity user) {
+    public LibertyOAuth2User(UserDocument user) {
         this.user = user;
     }
 

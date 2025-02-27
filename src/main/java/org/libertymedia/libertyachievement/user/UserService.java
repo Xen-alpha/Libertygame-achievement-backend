@@ -1,8 +1,7 @@
 package org.libertymedia.libertyachievement.user;
 
 import lombok.RequiredArgsConstructor;
-import org.libertymedia.libertyachievement.user.model.SignupRequest;
-import org.libertymedia.libertyachievement.user.model.UserEntity;
+import org.libertymedia.libertyachievement.user.model.UserDocument;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,11 +20,11 @@ public class UserService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<UserEntity> result = userRepository.findByUsername(username);
+        Optional<UserDocument> result = userRepository.findByUsername(username);
 
         if (result.isPresent()) {
             // 7번 로직
-            UserEntity user = result.get();
+            UserDocument user = result.get();
             return user;
         }
 
