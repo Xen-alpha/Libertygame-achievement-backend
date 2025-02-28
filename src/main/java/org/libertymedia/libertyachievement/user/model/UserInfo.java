@@ -1,12 +1,11 @@
 package org.libertymedia.libertyachievement.user.model;
 
 import com.mongodb.lang.NonNull;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,9 +16,9 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Document(collection="libertyuser")
+@Entity
 @Builder
-public class UserDocument implements UserDetails {
+public class UserInfo implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         return true;
@@ -27,7 +26,7 @@ public class UserDocument implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return isLocked;
+        return true;
     }
 
     @Override
@@ -43,22 +42,20 @@ public class UserDocument implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
+        GrantedAuthority authority = new SimpleGrantedAuthority(role);
         authorities.add(authority);
         return authorities;
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
-    @NonNull
+    @Column(unique = true, nullable = false)
     private Long userIdx;
-    @NonNull
+    @Column(unique = true, nullable = false)
     private String username;
-    @NonNull
+    @Column(unique = true, nullable = false)
     private String password;
-    @NonNull
-    private String email;
-    @NonNull
+    @Column(nullable = false)
     private String role;
-    private boolean isLocked;
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.config.filter.JwtFilter;
 import org.libertymedia.libertyachievement.config.filter.LoginFilter;
 import org.libertymedia.libertyachievement.user.LibertyOAuth2UserService;
+import org.libertymedia.libertyachievement.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
     private final AuthenticationConfiguration configuration;
     private final LibertyOAuth2UserService oAuth2UserService;
+    private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -45,7 +47,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
         );
 
-        http.addFilterAt(new LoginFilter(configuration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new LoginFilter(configuration.getAuthenticationManager(), userRepository), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new JwtFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

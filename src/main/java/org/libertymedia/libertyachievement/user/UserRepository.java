@@ -1,10 +1,10 @@
 package org.libertymedia.libertyachievement.user;
 
-import org.libertymedia.libertyachievement.user.model.UserDocument;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.libertymedia.libertyachievement.user.model.UserInfo;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends MongoRepository<UserDocument, Long> {
-    Optional<UserDocument> findByUsername(String username);
+public interface UserRepository extends JpaRepository<UserInfo, Long> {
+    Optional<UserInfo> findByUsername(String username);
 }

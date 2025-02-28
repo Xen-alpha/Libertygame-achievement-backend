@@ -1,7 +1,8 @@
 package org.libertymedia.libertyachievement.config.filter;
 
 
-import org.libertymedia.libertyachievement.user.model.UserDocument;
+import org.libertymedia.libertyachievement.user.UserRepository;
+import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,10 +21,13 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        UserDocument user = (UserDocument) authResult.getPrincipal();
+        UserInfo user = (UserInfo) authResult.getPrincipal();
+        userRepository.findByUsername(user.getUsername()).ifPresent(userRepository::save);
+
         String jwtToken = JwtUtil.generateToken(user.getIdx(), user.getUsername());
 
         ResponseCookie cookie = ResponseCookie

@@ -9,9 +9,9 @@ import java.util.Collection;
 import java.util.Map;
 
 public class LibertyOAuth2User implements OAuth2User {
-    private UserDocument user;
+    private UserInfo user;
 
-    public LibertyOAuth2User(UserDocument user) {
+    public LibertyOAuth2User(UserInfo user) {
         this.user = user;
     }
 
@@ -28,7 +28,7 @@ public class LibertyOAuth2User implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
 
         authorities.add(authority);
         return authorities;

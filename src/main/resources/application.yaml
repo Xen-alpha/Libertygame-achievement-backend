@@ -1,28 +1,51 @@
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
 spring:
   application:
     name: LibertyAchievement
   data:
     mongodb:
-      uri: mongodb://localhost/libertymedia
+      uri: ${MONGODB_URL}
       port: 27017
       username: ${MONGODB_USERNAME}
       password: ${MONGODB_PASSWORD}
+  datasource:
+    url: ${ORACLE_URL}
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: ${ORACLE_USERNAME}
+    password: ${ORACLE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+
   security:
     oauth2:
       client:
         registration:
           libertygame:
-            client-id: ???
-            redirect-uri: http://libertyga.me/
+            client-id: ${OAUTH_CLIENT_ID}
+            redirect-uri: https://libertymedia.libertygame.work/authorized
             authorization-grant-type: authorization_code
             client-authentication-method: none
-            client-name: LibertygameApp
-            scope: # ?????? ? ??? ???
-              - profile_nickname
+            client-name: ${OAUTH_CLIENT_NAME}
+            scope: #
+              - sub
+              - username
+              - confirmed_email
+              - blocked
         provider:
           libertygame:
-            authorization-uri:
-            token-uri:
-            user-info-uri:
-            user-name-attribute:
+            authorization-uri: https://dev.libertygame.work/rest.php/oauth2/authorize
+            token-uri: https://dev.libertygame.work/rest.php/oauth2/access_token
+            user-info-uri: https://dev.libertygame.work/rest.php/oauth2/resource/profile
+            user-name-attribute: username
+
+jwt:
+  secret: ${JWT_SECRET}
+  expired: ${JWT_EXPIRED}
 

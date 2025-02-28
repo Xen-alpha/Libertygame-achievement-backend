@@ -5,7 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.libertymedia.libertyachievement.user.model.UserDocument;
+import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,7 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         if(jwtToken != null) {
-            UserDocument user =  JwtUtil.getUser(jwtToken);
+            UserInfo user = JwtUtil.getUser(jwtToken);
 
             if(user != null) {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
