@@ -7,3 +7,22 @@ spring:
       port: 27017
       username: ${MONGODB_USERNAME}
       password: ${MONGODB_PASSWORD}
+  security:
+    oauth2:
+      client:
+        registration:
+          libertygame:
+            client-id: ???
+            redirect-uri: http://libertyga.me/
+            authorization-grant-type: authorization_code
+            client-authentication-method: none
+            client-name: LibertygameApp
+            scope: # ?????? ? ??? ???
+              - profile_nickname
+        provider:
+          libertygame:
+            authorization-uri:
+            token-uri:
+            user-info-uri:
+            user-name-attribute:
+
