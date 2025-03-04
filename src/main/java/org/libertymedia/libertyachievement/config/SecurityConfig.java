@@ -43,7 +43,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(
                 (auth) -> auth
                         .requestMatchers("/achievement/v0/list/**").permitAll()
-                        .requestMatchers("/achievement/v0/addition", "/user/*").hasRole("USER")
+                        .requestMatchers("/achievement/v0/addition", "/user").hasRole("USER")
                         .anyRequest().authenticated()
         );
 

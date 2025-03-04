@@ -1,0 +1,8 @@
+user_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g24203634e8d913_user_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+user_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g24203634e8d913_user_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+user_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g24203634e8d913_user_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+

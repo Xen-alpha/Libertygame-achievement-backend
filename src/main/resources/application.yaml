@@ -29,11 +29,10 @@ spring:
         registration:
           libertygame:
             client-id: ${OAUTH_CLIENT_ID}
-            redirect-uri: https://libertymedia.libertygame.work/authorized
             authorization-grant-type: authorization_code
             client-authentication-method: none
             client-name: ${OAUTH_CLIENT_NAME}
-            scope: #
+            scope: # 고유 ID 번호, 사용자 이름, 이메일(선택), 차단 여부
               - sub
               - username
               - confirmed_email
