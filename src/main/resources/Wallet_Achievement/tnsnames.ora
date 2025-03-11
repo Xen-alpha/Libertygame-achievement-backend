@@ -1,0 +1,12 @@
+achievement_high = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g24203634e8d913_achievement_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+achievement_low = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g24203634e8d913_achievement_low.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+achievement_medium = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g24203634e8d913_achievement_medium.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+achievement_tp = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g24203634e8d913_achievement_tp.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+achievement_tpurgent = (description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1522)(host=adb.ap-chuncheon-1.oraclecloud.com))(connect_data=(service_name=g24203634e8d913_achievement_tpurgent.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+
+
+

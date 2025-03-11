@@ -1,5 +1,6 @@
 package org.libertymedia.libertyachievement.user.model;
 
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+@Getter
 public class LibertyOAuth2User implements OAuth2User {
     private UserInfo user;
 
@@ -24,6 +26,7 @@ public class LibertyOAuth2User implements OAuth2User {
     public String getName() {
         return user.getUsername();
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

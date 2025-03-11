@@ -1,6 +1,7 @@
 package org.libertymedia.libertyachievement.achievement.model;
 
 
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class AchievementDocument {
     @Id
     private Long idx;
+    @Column(unique=true)
     private String name;
     private String description;
     private Long userId;

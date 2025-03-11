@@ -10,18 +10,17 @@ spring:
     name: LibertyAchievement
   data:
     mongodb:
-      uri: ${MONGODB_URL}
-      port: 27017
-      username: ${MONGODB_USERNAME}
-      password: ${MONGODB_PASSWORD}
+      uri: mongodb+srv://${MONGODB_USERNAME}:${MONGODB_PASSWORD}@cluster0.e5il1.mongodb.net/libertymedia?retryWrites=true&w=majority&appName=Cluster0
   datasource:
-    url: ${ORACLE_URL}
+    url: jdbc:oracle:thin:@achievement_high?TNS_ADMIN=${WALLET_PATH}
     driver-class-name: oracle.jdbc.OracleDriver
     username: ${ORACLE_USERNAME}
     password: ${ORACLE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
+    database-platform: org.hibernate.dialect.OracleDialect
+    show-sql: true
 
   security:
     oauth2:
@@ -29,6 +28,7 @@ spring:
         registration:
           libertygame:
             client-id: ${OAUTH_CLIENT_ID}
+            redirect-uri:  https://libertymedia.libertygame.work/authorized
             authorization-grant-type: authorization_code
             client-authentication-method: none
             client-name: ${OAUTH_CLIENT_NAME}

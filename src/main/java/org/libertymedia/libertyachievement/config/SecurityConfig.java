@@ -27,7 +27,7 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
 
         http.oauth2Login(config->{
-            config.userInfoEndpoint(endpoint ->
+            config.loginPage("/user/login").userInfoEndpoint(endpoint ->
                     endpoint.userService(oAuth2UserService));
         });
 
@@ -37,13 +37,14 @@ public class SecurityConfig {
         http.sessionManagement(AbstractHttpConfigurer::disable);
         http.logout(AbstractHttpConfigurer::disable);
         http.logout(logout -> logout
-                .permitAll().logoutUrl("/logout").logoutSuccessUrl("/").deleteCookies("ATOKEN").invalidateHttpSession(true)
+                .permitAll().logoutUrl("/logout").logoutSuccessUrl("/user/logout").deleteCookies("ATOKEN").invalidateHttpSession(true)
         );
 
         http.authorizeHttpRequests(
                 (auth) -> auth
-                        .requestMatchers("/achievement/v0/list/**").permitAll()
+                        .requestMatchers("/achievement/v0/list/**", "/user/login", "/logout", "/user/logout").permitAll()
                         .requestMatchers("/achievement/v0/addition", "/user").hasRole("USER")
+                        .requestMatchers("/achievement/v0/removal").hasRole("ADMIN")
                         .anyRequest().authenticated()
         );
 
