@@ -36,8 +36,8 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
             return UserInfo.builder()
-                    .idx(claims.get("userIdx", Long.class))
-                    .username(claims.get("userName", String.class))
+                    .userIdx(claims.get("userIdx", Long.class))
+                    .username(claims.get("username", String.class))
                     .build();
 
         } catch (ExpiredJwtException e) {

@@ -1,4 +1,5 @@
 FROM openjdk:17-ea-slim-buster
+LABEL authors="Xenα"
 
 ADD ./build/libs/LibertyAchievement-0.0.1-SNAPSHOT.jar /app.jar
 EXPOSE 8080

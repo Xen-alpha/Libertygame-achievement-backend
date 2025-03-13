@@ -1,7 +1,10 @@
 package org.libertymedia.libertyachievement.achievement;
 
-import org.libertymedia.libertyachievement.achievement.model.AchievementDocument;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.libertymedia.libertyachievement.achievement.model.Achievement;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AchievementRepository extends MongoRepository<AchievementDocument, Long> {
+import java.util.Optional;
+
+public interface AchievementRepository extends JpaRepository<Achievement, Long> {
+    public Optional<Achievement> findByTitle(String title);
 }

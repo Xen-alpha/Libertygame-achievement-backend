@@ -1,21 +1,20 @@
 package org.libertymedia.libertyachievement.user.model;
 
-import com.mongodb.lang.NonNull;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.libertymedia.libertyachievement.achievement.model.Progress;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 @Builder
 public class UserInfo implements UserDetails {
@@ -26,7 +25,7 @@ public class UserInfo implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.notBlocked;
     }
 
     @Override
@@ -55,7 +54,18 @@ public class UserInfo implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
     @Column(unique = true, nullable = false)
-    private String password;
+    private String password; // 귀찮게도 추후의 자체 회원 시스템을 대비하려면 UserDetails 상속과 함께 이것을 남겨야 할 것이다.
+
+    private String email;
     @Column(nullable = false)
     private String role;
+
+    private Boolean notBlocked;
+
+    @OneToOne
+    private Promotion promotion;
+
+    @OneToMany(mappedBy = "user")
+    private List<Progress> progressList;
+
 }

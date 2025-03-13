@@ -2,6 +2,7 @@ package org.libertymedia.libertyachievement.config.filter;
 
 
 import org.libertymedia.libertyachievement.user.UserRepository;
+import org.libertymedia.libertyachievement.user.model.LibertyOAuth2User;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 import jakarta.servlet.FilterChain;
@@ -25,20 +26,12 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        UserInfo user = (UserInfo) authResult.getPrincipal();
-        userRepository.findByUsername(user.getUsername()).ifPresent(userRepository::save);
-
-        String jwtToken = JwtUtil.generateToken(user.getIdx(), user.getUsername());
-
-        ResponseCookie cookie = ResponseCookie
-                .from("ATOKEN", jwtToken)
-                .path("/")
-                .httpOnly(true)
-                .secure(true)
-                .maxAge(Duration.ofHours(1L))
-                .build();
-
-        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-
+        UserInfo user = ((LibertyOAuth2User)authResult.getPrincipal()).getUser();
+        // OAuth2 로그인이면 무조건 가입시켜줌
+        UserInfo realUser = userRepository.findByUsername(user.getUsername()).orElse(null);
+        if (realUser == null) {
+            userRepository.save(user);
+        }
+        
     }
 }

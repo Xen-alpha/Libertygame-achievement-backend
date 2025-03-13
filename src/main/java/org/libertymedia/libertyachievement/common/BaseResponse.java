@@ -1,4 +1,4 @@
-package org.libertymedia.libertyachievement.achievement.model;
+package org.libertymedia.libertyachievement.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
