@@ -3,6 +3,7 @@ package org.libertymedia.libertyachievement.user;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.user.model.LibertyOAuth2User;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
@@ -11,6 +12,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
@@ -33,7 +35,7 @@ public class LibertyOAuth2UserService
         System.out.println(username + " with email " + email);
         UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
         if (userInfo == null) {
-            return new LibertyOAuth2User(UserInfo.builder().userIdx(idx).notBlocked(true).username(username).email(email).role("BASIC").build());
+            return new LibertyOAuth2User(UserInfo.builder().userIdx(idx).notBlocked(true).username(username).email(email).password(UUID.randomUUID().toString()).role("BASIC").build());
         }
 
         return oAuth2User;
