@@ -56,7 +56,7 @@ public class AchievementService {
         Achievement achievement = achievementRepository.findByTitle(request.getTitle()).orElse(null);
         UserInfo user = userRepository.findByUsername(request.getUsername()).orElse(null);
         if (achievement == null || user == null) {
-            throw new RuntimeException("Cannot make chievement progress");
+            throw new RuntimeException("Cannot make achievement progress");
         }
         Progress progress = progressRepository.findByAchievementAndUser(achievement, user);
         if (progress == null) {

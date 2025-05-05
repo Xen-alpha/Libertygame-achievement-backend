@@ -29,7 +29,7 @@ public class AchievementController {
     }
 
     @PutMapping("/achieve")
-    public ResponseEntity<String> createAchievement(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
+    public ResponseEntity<String> createAchieve(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
         logger.info("Updating achievement for user {}", body.getUsername());
         achievementService.achieveProgress(body);
         return ResponseEntity.ok("도전과제 달성");
