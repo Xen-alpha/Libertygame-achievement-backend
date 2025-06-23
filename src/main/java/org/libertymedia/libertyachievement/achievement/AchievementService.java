@@ -1,10 +1,12 @@
 package org.libertymedia.libertyachievement.achievement;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.achievement.model.Achievement;
 import org.libertymedia.libertyachievement.achievement.model.Progress;
 import org.libertymedia.libertyachievement.achievement.model.request.AchieveRequest;
 import org.libertymedia.libertyachievement.achievement.model.request.AchievementRequest;
+import org.libertymedia.libertyachievement.achievement.model.response.AchievementResponse;
 import org.libertymedia.libertyachievement.achievement.model.response.QueryItemResponse;
 import org.libertymedia.libertyachievement.achievement.model.response.QueryResponse;
 import org.libertymedia.libertyachievement.user.UserRepository;
@@ -47,12 +49,13 @@ public class AchievementService {
                     .build();
             result.add(queryItemResponse);
         }
-        QueryResponse response = new QueryResponse(user.getUserIdx(),username, result);
-        return response;
+        return new QueryResponse(user.getUserIdx(),username, result);
+
     }
 
     // create, BASIC, progress
-    public void achieveProgress(AchieveRequest request){
+    @Transactional
+    public AchievementResponse achieveProgress(AchieveRequest request){
         Achievement achievement = achievementRepository.findByTitle(request.getTitle()).orElse(null);
         UserInfo user = userRepository.findByUsername(request.getUsername()).orElse(null);
         if (achievement == null || user == null) {
@@ -68,8 +71,13 @@ public class AchievementService {
                 progressRepository.save(progress);
             }
         }
+        return AchievementResponse.builder().title(achievement.getTitle())
+                .description(achievement.getDescription()).progress(progress.getCurrentProgress())
+                .maxprogress(achievement.getMaxProgress()).build();
+
     }
 
+    @Transactional
     public void deleteAchievement(String achievementName){
         Achievement achievement = achievementRepository.findByTitle(achievementName).orElse(null);
         if(achievement != null){

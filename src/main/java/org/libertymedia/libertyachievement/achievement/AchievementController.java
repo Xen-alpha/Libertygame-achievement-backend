@@ -3,6 +3,7 @@ package org.libertymedia.libertyachievement.achievement;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.achievement.model.request.AchieveRequest;
 import org.libertymedia.libertyachievement.achievement.model.request.AchievementRequest;
+import org.libertymedia.libertyachievement.achievement.model.response.AchievementResponse;
 import org.libertymedia.libertyachievement.common.BaseResponse;
 import org.libertymedia.libertyachievement.achievement.model.response.QueryResponse;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
@@ -29,10 +30,10 @@ public class AchievementController {
     }
 
     @PutMapping("/achieve")
-    public ResponseEntity<String> createAchieve(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
+    public ResponseEntity<AchievementResponse> createAchieve(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
         logger.info("Updating achievement for user {}", body.getUsername());
-        achievementService.achieveProgress(body);
-        return ResponseEntity.ok("도전과제 달성");
+        AchievementResponse response =achievementService.achieveProgress(body);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/list/{username}")
