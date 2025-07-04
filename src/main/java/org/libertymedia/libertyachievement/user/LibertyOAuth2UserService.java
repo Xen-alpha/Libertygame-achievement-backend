@@ -1,5 +1,6 @@
 package org.libertymedia.libertyachievement.user;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.user.model.LibertyOAuth2User;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
@@ -25,6 +26,7 @@ public class LibertyOAuth2UserService
             = new DefaultOAuth2UserService();
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(userRequest);
         Map<String, Object> attributes = oAuth2User.getAttributes();
@@ -35,7 +37,12 @@ public class LibertyOAuth2UserService
         System.out.println(username + " with email " + email);
         UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
         if (userInfo == null) {
-            return new LibertyOAuth2User(UserInfo.builder().userIdx(idx).notBlocked(true).username(username).email(email).password(UUID.randomUUID().toString()).role("BASIC").build());
+            return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(true).username(username).email(email).password(UUID.randomUUID().toString()).role("BASIC").build()));
+        } else {
+            if (blocked) {
+                userInfo.setNotBlocked(false);
+                userRepository.save(userInfo);
+            }
         }
 
         return oAuth2User;

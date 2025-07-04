@@ -1,5 +1,6 @@
 package org.libertymedia.libertyachievement.user.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import org.libertymedia.libertyachievement.achievement.model.Progress;
@@ -17,6 +18,7 @@ import java.util.List;
 @Setter
 @Entity
 @Builder
+@Schema(description="사용자 정보")
 public class UserInfo implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
@@ -44,6 +46,11 @@ public class UserInfo implements UserDetails {
         GrantedAuthority authority = new SimpleGrantedAuthority(role);
         authorities.add(authority);
         return authorities;
+    }
+
+    @Override
+    public String getPassword() {
+        return null;
     }
 
     @Id

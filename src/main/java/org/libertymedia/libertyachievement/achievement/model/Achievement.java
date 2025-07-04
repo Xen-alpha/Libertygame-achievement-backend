@@ -2,6 +2,7 @@ package org.libertymedia.libertyachievement.achievement.model;
 
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.*;
 
 import java.util.List;
@@ -15,11 +16,12 @@ public class Achievement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
-    @Column(unique=true, nullable=false)
+    @Column(nullable=false)
     private String title;
-    @Column(unique=true, nullable=false)
+    @Column( nullable=false)
     private String description;
     @Column(nullable=false)
+    @Positive
     private Integer maxProgress;
 
     @OneToMany(mappedBy = "achievement")
