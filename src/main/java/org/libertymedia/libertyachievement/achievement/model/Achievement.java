@@ -20,6 +20,8 @@ public class Achievement {
     private String title;
     @Column( nullable=false)
     private String description;
+    @Column( nullable= false)
+    private String createdBy;
     @Column(nullable=false)
     @Positive
     private Integer maxProgress;

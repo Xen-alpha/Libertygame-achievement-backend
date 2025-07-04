@@ -25,6 +25,11 @@ public class AchievementService {
 
     // create, ADVANCED, achievement
     public String addAchievement(AchievementRequest request){
+        // 우선 사용자가 존재하는지 확인
+        UserInfo user = userRepository.findByUsername(request.getCreatedBy()).orElse(null);
+        if (user == null) {
+            throw new IllegalArgumentException("Wrong Creator name.");
+        }
         Achievement achievement = achievementRepository.save(Achievement.builder().title(request.getTitle())
                 .description(request.getDescription())
                 .maxProgress(request.getMaxProgress())

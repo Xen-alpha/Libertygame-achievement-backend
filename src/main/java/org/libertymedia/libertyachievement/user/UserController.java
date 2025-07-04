@@ -2,7 +2,9 @@ package org.libertymedia.libertyachievement.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -10,6 +12,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
+
+    @Operation(description="자신의 이름 확인")
+    @GetMapping("/name")
+    public ResponseEntity<String> getMyName(@AuthenticationPrincipal UserInfo user) {
+        return ResponseEntity.ok(user.getUsername());
+    }
     
     @Operation(description="로그아웃 리다이렉션")
     @PostMapping("/logout")

@@ -17,4 +17,6 @@ public class AchievementRequest {
     private String description;
     @Schema(description="달성까지 필요한 동작 수행 횟수, 1이면 동작 즉시 달성됩니다.")
     private Integer maxProgress;
+    @Schema(description="요청한 사용자 이름")
+    private String createdBy;
 }
