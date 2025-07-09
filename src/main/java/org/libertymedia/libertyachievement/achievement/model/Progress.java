@@ -2,6 +2,7 @@ package org.libertymedia.libertyachievement.achievement.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 
@@ -16,6 +17,8 @@ public class Progress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
+    @Schema(description="현재 진행도")
+    @PositiveOrZero
     private Integer currentProgress;
 
     @ManyToOne

@@ -2,6 +2,7 @@ package org.libertymedia.libertyachievement.achievement;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.achievement.model.request.AchieveRequest;
 import org.libertymedia.libertyachievement.achievement.model.request.AchievementRequest;
@@ -27,7 +28,7 @@ public class AchievementController {
 
     @Operation(description="도전과제 항목을 생성합니다.")
     @PostMapping("/addition")
-    public ResponseEntity<String> createAchievement(@AuthenticationPrincipal UserInfo user, @RequestBody AchievementRequest body) {
+    public ResponseEntity<String> createAchievement(@AuthenticationPrincipal UserInfo user, @Valid @RequestBody AchievementRequest body) {
         logger.info("Creating achievement {}", body.getTitle());
         String result = achievementService.addAchievement(body);
         return ResponseEntity.ok("도전과제 등록 성공: "+ result);
@@ -35,7 +36,7 @@ public class AchievementController {
 
     @Operation(description="도전과제 진행도를 올립니다.")
     @PutMapping("/achieve")
-    public ResponseEntity<AchievementResponse> createAchieve(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
+    public ResponseEntity<AchievementResponse> createAchieve(@AuthenticationPrincipal UserInfo user, @Valid @RequestBody AchieveRequest body) {
         logger.info("Updating achievement for user {}", body.getUsername());
         AchievementResponse response =achievementService.achieveProgress(body);
         return ResponseEntity.ok(response);

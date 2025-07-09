@@ -9,6 +9,7 @@ import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.rememberme.InvalidCookieException;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("JwtFilter 실행됐다.");
+        // 쿠키에서 도전과제 서버용 토큰 탐색
         Cookie[] cookies = request.getCookies();
 
         String jwtToken = null;
@@ -40,6 +41,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
 
+
+        }
+        if (!JwtUtil.validate(jwtToken)) {
+            throw new InvalidCookieException("만료된 토큰");
         }
 
         filterChain.doFilter(request, response);

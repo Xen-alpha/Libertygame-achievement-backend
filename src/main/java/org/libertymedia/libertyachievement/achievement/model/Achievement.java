@@ -25,6 +25,8 @@ public class Achievement {
     @Column(nullable=false)
     @Positive
     private Integer maxProgress;
+    @Column(nullable=true)
+    private String gameName;
 
     @OneToMany(mappedBy = "achievement")
     private List<Progress> userProgresses;
