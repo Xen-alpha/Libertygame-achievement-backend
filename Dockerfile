@@ -4,4 +4,4 @@ LABEL authors="Xenα"
 ADD ./build/libs/libertygame-achievement-0.1.0-SNAPSHOT.jar /app.jar
 EXPOSE 8080
 
-CMD ["java", "-jar", "/app.jar"]
+CMD ["java", "-jar", "/app.jar", "-Dfile.encoding=UTF-8", "-Dconsole.encoding=UTF-8"]
