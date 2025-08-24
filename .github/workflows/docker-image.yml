@@ -17,8 +17,8 @@ jobs:
         java-version: 17
     - name: Setup Gradle
       uses: gradle/actions/setup-gradle@v4
-    - name: Check directory state
-      run: ls -l
+    - name: Change gradle wrapper script to executable
+      run: sudo chmod 755 ./gradlew
     - name: Build with Gradle
       run: sudo -S ./gradlew bootjar
     - name: Set QEMU system
