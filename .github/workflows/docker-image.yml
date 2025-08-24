@@ -15,9 +15,10 @@ jobs:
     - name: Set QEMU system
       uses: docker/setup-qemu-action@v3
     - name: Setup Java JDK and build Jar file
-      uses: teheidoma/spring-boot-image-build-action@0.0.3
+      uses: teheidoma/spring-boot-image-build-action-jdk17@0.0.3
       with:
-        jdk_dist: 17 # optional
+        registry_username: senouis
+        registry_password: ${{ secrets.DOCKER_PASSWORD }}
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
     - name: Extract Docker metadata
