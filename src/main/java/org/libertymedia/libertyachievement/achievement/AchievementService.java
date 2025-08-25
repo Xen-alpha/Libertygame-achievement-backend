@@ -1,6 +1,7 @@
 package org.libertymedia.libertyachievement.achievement;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.achievement.model.Achievement;
 import org.libertymedia.libertyachievement.achievement.model.Progress;
@@ -30,11 +31,11 @@ public class AchievementService {
         if (user == null) {
             throw new IllegalArgumentException("Wrong Creator name.");
         }
-        Achievement achievement = achievementRepository.save(Achievement.builder().title(request.getTitle())
-                .description(request.getDescription())
+        Achievement achievement = achievementRepository.save(Achievement.builder().atitle(request.getTitle())
+                .adescription(request.getDescription())
                 .maxProgress(request.getMaxProgress())
                 .build());
-        return achievement.getTitle();
+        return achievement.getAtitle();
     }
 
     // read, permit all
@@ -48,7 +49,7 @@ public class AchievementService {
         for (Progress progressEntity : progressEntities) {
             Achievement achievement = progressEntity.getAchievement();
             QueryItemResponse queryItemResponse = QueryItemResponse.builder()
-                    .title(achievement.getTitle()).description(achievement.getDescription())
+                    .title(achievement.getAtitle()).description(achievement.getAdescription())
                     .maxprogress(achievement.getMaxProgress())
                     .progress(progressEntity.getCurrentProgress())
                     .build();
@@ -61,7 +62,7 @@ public class AchievementService {
     // create, BASIC, progress
     @Transactional
     public AchievementResponse achieveProgress(AchieveRequest request){
-        Achievement achievement = achievementRepository.findByTitle(request.getTitle()).orElse(null);
+        Achievement achievement = achievementRepository.findByAtitle(request.getTitle()).orElse(null);
         UserInfo user = userRepository.findByUsername(request.getUsername()).orElse(null);
         if (achievement == null || user == null) {
             throw new RuntimeException("Cannot make achievement progress");
@@ -76,18 +77,64 @@ public class AchievementService {
                 progressRepository.save(progress);
             }
         }
-        return AchievementResponse.builder().title(achievement.getTitle())
-                .description(achievement.getDescription()).progress(progress.getCurrentProgress())
+        return AchievementResponse.builder().title(achievement.getAtitle())
+                .description(achievement.getAdescription()).progress(progress.getCurrentProgress())
                 .maxprogress(achievement.getMaxProgress()).build();
 
     }
 
     @Transactional
     public void deleteAchievement(String achievementName){
-        Achievement achievement = achievementRepository.findByTitle(achievementName).orElse(null);
+        Achievement achievement = achievementRepository.findByAtitle(achievementName).orElse(null);
         if(achievement != null){
             progressRepository.deleteAll(achievement.getUserProgresses());
             achievementRepository.delete(achievement);
         }
+    }
+
+    public List<AchievementResponse> processAchivement(List<Achievement> targets, String username) {
+        UserInfo user = userRepository.findByUsername(username).orElseThrow();
+        List<AchievementResponse> result = new ArrayList<>();
+        for (Achievement achievement : targets) {
+            Progress progress = progressRepository.findByAchievementAndUser(achievement, user);
+            if (progress.getCurrentProgress() >= achievement.getMaxProgress()) {
+                continue;
+            }
+            progress.setCurrentProgress(progress.getCurrentProgress() + 1);
+            progressRepository.save(progress);
+            result.add(AchievementResponse.from(achievement,progress));
+        }
+        return result;
+    }
+
+    public List<AchievementResponse> achieveEditProgress(@Valid AchieveRequest body) {
+        List<Achievement> targets = achievementRepository.findByCreatedBy("Achieve_Edit");
+        return processAchivement(targets, body.getUsername());
+    }
+
+    public List<AchievementResponse> achieveRateProgress(@Valid AchieveRequest body) {
+        List<Achievement> targets = achievementRepository.findByCreatedBy("Achieve_Rate");
+        return processAchivement(targets, body.getUsername());
+    }
+
+    public List<AchievementResponse> achieveFileProgress(@Valid AchieveRequest body) {
+        List<Achievement> targets = achievementRepository.findByCreatedBy("Achieve_Upload");
+        return processAchivement(targets, body.getUsername());
+    }
+
+    public List<AchievementResponse> achieveTalkProgress(@Valid AchieveRequest body) {
+        List<Achievement> targets = achievementRepository.findByCreatedBy("Achieve_Talk");
+        return processAchivement(targets, body.getUsername());
+    }
+
+    public List<AchievementResponse> getGameAchievements(String username, String gameName) {
+        List<Achievement> targets = achievementRepository.findByGameName(gameName);
+        UserInfo user = userRepository.findByUsername(username).orElseThrow();
+        List<AchievementResponse> result = new ArrayList<>();
+        for (Achievement achievement : targets) {
+            Progress progress = progressRepository.findByAchievementAndUser(achievement, user);
+            result.add(AchievementResponse.from(achievement,progress));
+        }
+        return result;
     }
 }
