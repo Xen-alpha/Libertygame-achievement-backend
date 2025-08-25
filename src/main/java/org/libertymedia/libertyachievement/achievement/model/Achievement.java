@@ -17,9 +17,9 @@ public class Achievement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idx;
     @Column(nullable=false)
-    private String title;
+    private String atitle;
     @Column( nullable=false)
-    private String description;
+    private String adescription;
     @Column( nullable= false)
     private String createdBy;
     @Column(nullable=false)
