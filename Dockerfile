@@ -2,7 +2,7 @@ FROM openjdk:17-ea-slim-buster
 LABEL authors="Xenα"
 
 ADD ./build/libs/libertygame-achievement-0.1.0-SNAPSHOT.jar /app.jar
-EXPOSE 8080
+EXPOSE 8000
 
 ENV HOST_DOMAIN="dev.libertygame.work"
 ENV WALLET_PATH="src/main/resources/Wallet_Achievement"
