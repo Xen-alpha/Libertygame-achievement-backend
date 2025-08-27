@@ -4,7 +4,7 @@ INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, ga
 INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, game_name) VALUES (4, '10000회 편집 달성', '어떻게 여기까지 온 거죠? 10000회 편집 횟수를 달성했습니다!', 'Achieve_Edit', 10000, NULL);
 INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, game_name) VALUES (5, '42회 편집 달성', '모든 것의 답안이 되는 42회 편집 횟수를 달성했습니다!', 'Achieve_Edit', 42, NULL);
 INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, game_name) VALUES (6, '300회 편집 달성', 'This is SPARTAAAAA!!! 300회 편집 횟수를 달성했습니다!', 'Achieve_Edit', 300, NULL);
-INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, game_name) VALUES (7, '500회 편집 달성', '어떻게 여기까지 온 거죠? 500회 편집 횟수를 달성했습니다!', 'Achieve_Edit', 500, NULL);
+INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, game_name) VALUES (7, '500회 편집 달성', '축하합니다! 500회 편집 횟수를 달성했습니다!', 'Achieve_Edit', 500, NULL);
 INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, game_name) VALUES (8, '5000회 편집 달성', '어떻게 여기까지 온 거죠? 5000회 편집 횟수를 달성했습니다!', 'Achieve_Edit', 5000, NULL);
 INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, game_name) VALUES (9, '로컬 DB 게임에서 저장하기', '당신의 게임 진행도가 저장되는 게임에서 첫 저장을 하셨습니다! 당신의 즐거움은 헛되지 않아요.', 'System', 1, NULL);
 INSERT INTO achievement (idx, atitle, adescription, created_by, max_progress, game_name) VALUES (10, '파일 업로드', '리버티게임에 소중한 파일 자료를 올려주셨습니다! 감사합니다.', 'Achieve_Upload', 1, NULL);

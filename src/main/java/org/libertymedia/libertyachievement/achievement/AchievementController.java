@@ -21,7 +21,7 @@ import java.util.List;
 @Tag(name="도전과제 관련 API", description="도전 과제 기능을 위해 요청해야 하는 URI들입니다.")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/achievement/v0")
+@RequestMapping("/achievement/v1")
 public class AchievementController {
     private final AchievementService achievementService;
     private final Logger logger = LoggerFactory.getLogger(getClass());
