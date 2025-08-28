@@ -1,4 +1,4 @@
-[![Docker Image CI](https://github.com/Xen-alpha/Libertygame-achievement-backend/actions/workflows/docker-image.yml/badge.svg)](https://github.com/Xen-alpha/Libertygame-achievement-backend/actions/workflows/docker-image.yml)
+[![Docker Image CI](https://github.com/Xen-alpha/Libertygame-achievement-backend/actions/workflows/docker-image.yml/badge.svg?event=status)](https://github.com/Xen-alpha/Libertygame-achievement-backend/actions/workflows/docker-image.yml)
 
 # Libertygame Achievement Server
 [리버티게임](https://libertyga.me) 도전과제 서버입니다. 아직 개발 중이며, 기능 및 안정화가 이루어진 1.0 버전까지 README의 내용이 바뀔 수 있습니다.
