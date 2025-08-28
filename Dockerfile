@@ -1,7 +1,7 @@
 FROM openjdk:17-ea-slim-buster
 LABEL authors="Xenα"
 
-ADD ./build/libs/libertygame-achievement-0.1.0-SNAPSHOT.jar /app.jar
+ADD ./build/libs/libertygame-achievement-0.5.0.jar /app.jar
 EXPOSE 8000
 
 ENV HOST_DOMAIN="dev.libertygame.work"
