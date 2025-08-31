@@ -17,6 +17,7 @@ OAuth2 연동을 한 이후 `(호스트):8000/swagger-ui/index.html`에서 사�
 
 ```
 ENV HOST_DOMAIN="dev.libertygame.work"
+ENV HOST_OAUTH="$HOST_DOMAIN"
 ENV WALLET_PATH="/root/oracle_wallet"
 ENV ORACLE_USERNAME=""
 ENV ORACLE_PASSWORD=""
