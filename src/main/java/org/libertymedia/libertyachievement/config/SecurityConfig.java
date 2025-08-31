@@ -40,7 +40,7 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(
                 (auth) -> auth
-                        .requestMatchers("/achievement/v0/list/**").permitAll()
+                        .requestMatchers("/achievement/v0/list/**", "/login").permitAll()
                         .requestMatchers("/achievement/v0/achieve", "/user").hasRole("BASIC")
                         .requestMatchers("/achievement/v0/achieve","/achievement/v0/addtion","/achievement/v0/deletion", "/user").hasRole("ADVANCED")
                         .requestMatchers("/achievement/v0/achieve","/achievement/v0/addtion","/achievement/v0/deletion", "/user","/user/promote/accepted", "/user/promote/declined").hasRole("ADMIN")
