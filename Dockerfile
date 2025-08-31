@@ -1,10 +1,11 @@
 FROM openjdk:17-ea-slim-buster
 LABEL authors="Xenα"
 
-ADD ./build/libs/libertygame-achievement-0.5.0.jar /app.jar
+ADD ./build/libs/libertygame-achievement-0.5.1.jar /app.jar
 EXPOSE 8000
 
 ENV HOST_DOMAIN="dev.libertygame.work"
+ENV HOST_OAUTH="$HOST_DOMAIN"
 ENV WALLET_PATH="/root/oracle_wallet"
 ENV ORACLE_USERNAME=""
 ENV ORACLE_PASSWORD=""
@@ -15,6 +16,6 @@ ENV OAUTH_CLIENT_NAME=""
 ENV JWT_SECRET=""
 ENV JWT_EXPIRED=86400000
 
-CMD ["java", "-jar", "/app.jar", "-Dfile.encoding=UTF-8", "-Dconsole.encoding=UTF-8", "-DHOST_DOMAIN=$HOST_DOMAIN", "-DWALLET_PATH=$WALLET_PATH", \
+CMD ["java", "-jar", "/app.jar", "-Dfile.encoding=UTF-8", "-Dconsole.encoding=UTF-8", "-DHOST_DOMAIN=$HOST_DOMAIN", "-DHOST_OAUTH=$HOST_OAUTH", "-DWALLET_PATH=$WALLET_PATH", \
     "-DORACLE_USERNAME=$ORACLE_USERNAME", "-DORACLE_PASSWORD=$ORACLE_PASSWORD", "-DMAIL_ADDR=$MAIL_ADDR", "-DMAIL_PASS=$MAIL_PASS", "-DOAUTH_CLIENT_ID=$OAUTH_CLIENT_ID", \
     "-DOAUTH_CLIENT_NAME=$OAUTH_CLIENT_NAME", "-DJWT_SECRET=$JWT_SECRET", "-DJWT_EXPIRED=$JWT_EXPIRED" ]
