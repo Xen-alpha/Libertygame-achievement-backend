@@ -1,3 +1,4 @@
+// Made with Apache Groovy
 plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.3'
@@ -6,7 +7,7 @@ plugins {
 }
 
 group = 'org.libertymedia'
-version = '0.5.0'
+version = '0.5.1'
 
 java {
     toolchain {
