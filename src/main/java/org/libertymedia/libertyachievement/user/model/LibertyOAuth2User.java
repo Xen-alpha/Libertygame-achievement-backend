@@ -19,7 +19,7 @@ public class LibertyOAuth2User implements OAuth2User {
 
     @Override
     public Map<String, Object> getAttributes() {
-        return Map.of("username", user.getUsername(), "userIdx", user.getUserIdx(), "email", user.getEmail(), "role", user.getRole(), "notBlocked", user.getNotBlocked());
+        return Map.of("sub", user.getUserIdx().toString(),"username", user.getUsername(),  "email", user.getEmail(),  "blocked", user.getNotBlocked());
     }
 
     @Override
@@ -32,7 +32,6 @@ public class LibertyOAuth2User implements OAuth2User {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole());
-
         authorities.add(authority);
         return authorities;
     }
