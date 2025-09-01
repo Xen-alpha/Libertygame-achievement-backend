@@ -9,6 +9,7 @@ server:
     enabled: true
     key-store: "classpath:libertygame.p12"
     key-store-password: ${KEYSTORE_PASS}
+    key-store-type: pkcs12
 spring:
   application:
     name: libertygame-achievement
