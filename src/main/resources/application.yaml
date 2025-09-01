@@ -6,10 +6,7 @@ server:
       force: true
       enabled: true
   ssl:
-    enabled: true
-    key-store: "classpath:libertygame.p12"
-    key-store-password: ${KEYSTORE_PASS}
-    key-store-type: pkcs12
+    enabled: false
 spring:
   application:
     name: libertygame-achievement
@@ -43,7 +40,7 @@ spring:
           libertygame:
             client-id: ${OAUTH_CLIENT_ID}
             client-secret: ${OAUTH_CLIENT_SECRET}
-            redirect-uri: https://${HOST_DOMAIN}:8000/login/oauth2/code/libertygame-achievement
+            redirect-uri: http://localhost:8000/login/oauth2/code/libertygame-achievement
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_basic
             client-name: ${OAUTH_CLIENT_NAME}
