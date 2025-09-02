@@ -1,6 +1,11 @@
 server:
   port: 8000
   servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        same-site: lax
     encoding:
       charset: UTF-8
       force: true
