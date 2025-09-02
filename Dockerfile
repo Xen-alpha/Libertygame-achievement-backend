@@ -4,6 +4,7 @@ LABEL authors="Xenα"
 ADD ./build/libs/libertygame-achievement-0.5.1.jar /app.jar
 EXPOSE 8000
 
+ENV HOST_DOMAIN-"dev.libertygame.work"
 ENV HOST_OAUTH="dev.libertygame.work"
 ENV WALLET_PATH="/root/oracle_wallet"
 ENV ORACLE_USERNAME=""
