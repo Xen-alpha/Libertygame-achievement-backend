@@ -31,14 +31,6 @@ public class LibertyOAuth2UserService
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(userRequest);
-        if (oAuth2User == null) {
-            Map<String, Object> attributes = userRequest.getAdditionalParameters();
-            String username = (String) attributes.get("username");
-            String email = (String) attributes.get("email");
-            Long idx = (Long) attributes.get("sub");
-            Boolean blocked = (Boolean) attributes.get("blocked");
-            return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(blocked).username(username).email(email).password(UUID.randomUUID().toString()).role("BASIC").build()));
-        }
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String username = (String) attributes.get("username");
         UserInfo userInfo = userRepository.findByUsername(username).orElse(null);

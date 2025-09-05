@@ -16,6 +16,8 @@ server:
 spring:
   application:
     name: libertygame-achievement
+  mvc:
+    dispatch-options-request: true
   datasource:
     url: jdbc:oracle:thin:@achievement_high?TNS_ADMIN=${WALLET_PATH}
     driver-class-name: oracle.jdbc.OracleDriver
@@ -47,8 +49,8 @@ spring:
             client-id: ${OAUTH_CLIENT_ID}
             client-secret: ${OAUTH_CLIENT_SECRET}
             redirect-uri: https://${HOST_DOMAIN}/login/oauth2/code/libertygame
+            scope: sub,username,email,blocked
             authorization-grant-type: authorization_code
-            client-authentication-method: client_secret_basic
             client-name: ${OAUTH_CLIENT_NAME}
         provider:
           libertygame:
