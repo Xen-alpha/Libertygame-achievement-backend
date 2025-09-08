@@ -53,7 +53,7 @@ public class UserInfo implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Id

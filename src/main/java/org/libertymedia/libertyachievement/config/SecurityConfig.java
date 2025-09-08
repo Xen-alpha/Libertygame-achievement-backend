@@ -3,6 +3,7 @@ package org.libertymedia.libertyachievement.config;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.config.filter.LoginFilter;
 import org.libertymedia.libertyachievement.user.LibertyOAuth2UserService;
+import org.libertymedia.libertyachievement.user.UserRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -22,11 +23,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final AuthenticationConfiguration configuration;
+    private final UserRepository userRepository;
     private final LibertyOAuth2UserService userService;
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
-
 
 
         http.authorizeHttpRequests(
@@ -41,7 +42,7 @@ public class SecurityConfig {
         ).logout(l -> l.logoutSuccessUrl("/user/logout").clearAuthentication(true)
         ).formLogin(AbstractHttpConfigurer::disable
         ).csrf(AbstractHttpConfigurer::disable
-        ).addFilterAt(new LoginFilter(), UsernamePasswordAuthenticationFilter.class);
+        ).addFilterAt(new LoginFilter(configuration.getAuthenticationManager(), userRepository), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
