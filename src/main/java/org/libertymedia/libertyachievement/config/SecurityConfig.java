@@ -21,9 +21,9 @@ public class SecurityConfig {
 
         http.authorizeHttpRequests(
                 (auth) -> auth
-                        .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/logout", "/", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/logout", "/", "/swagger-ui/index.html", "/v3/**").permitAll()
                         .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user/**").hasRole("BASIC")
-                        .requestMatchers("/achievement/v1/achieve","/achievement/v1/addtion","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user/**").hasRole("ADVANCED")
+                        .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user/**").hasRole("ADVANCED")
                         .anyRequest().authenticated()
         ).oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfo -> userInfo.userService(userService)
