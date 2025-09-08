@@ -29,7 +29,7 @@ public class UserController {
 
     @Operation(description="도전과제 제작자로 승급하는 요청을 테이블에 저장합니다.")
     @PostMapping("/promote")
-    public ResponseEntity<String> promote(@AuthenticationPrincipal UserInfo user, @Valid @RequestBody PromotionRequest request) {
+    public ResponseEntity<String> promote(@AuthenticationPrincipal UserInfo user, @RequestBody PromotionRequest request) {
         try {
             userService.createPromotion(request);
         } catch (Exception e) {

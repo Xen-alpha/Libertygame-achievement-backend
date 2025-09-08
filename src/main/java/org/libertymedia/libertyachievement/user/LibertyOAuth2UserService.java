@@ -38,7 +38,10 @@ public class LibertyOAuth2UserService
             String email = (String) attributes.get("email");
             Long idx = parseLong((String) attributes.get("sub"));
             Boolean blocked = (Boolean) attributes.get("blocked");
-            return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(blocked).username(username).email(email).role("BASIC").build()));
+            return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(blocked).username(username).password(userRequest.getAccessToken().getTokenValue()).email(email).role("BASIC").build()));
+        } else {
+            userInfo.setPassword(userRequest.getAccessToken().getTokenValue());
+            userRepository.save(userInfo);
         }
 
         return oAuth2User;
