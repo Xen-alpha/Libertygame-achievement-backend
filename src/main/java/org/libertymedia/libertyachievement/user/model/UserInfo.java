@@ -43,8 +43,11 @@ public class UserInfo implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority(role);
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_BASIC");
         authorities.add(authority);
+        if (role.equals("ADVANCED")) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADVANCED"));
+        }
         return authorities;
     }
 
@@ -61,7 +64,7 @@ public class UserInfo implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
     @Column(unique = true, nullable = false)
-    private String password; // 귀찮게도 추후의 자체 회원 시스템을 대비하려면 UserDetails 상속과 함께 이것을 남겨야 할 것이다.
+    private String password; // 귀찮게도 추후의 자체 회원 시스템을 대비하려면 UserDetails 상속과 함께 이것을 남겨야 할 것이다. 지금은 그냥 쓰이지 않는다.
 
     private String email;
     @Column(nullable = false)

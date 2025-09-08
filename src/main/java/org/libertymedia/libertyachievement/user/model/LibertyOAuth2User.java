@@ -13,6 +13,7 @@ import java.util.Map;
 public class LibertyOAuth2User implements OAuth2User {
     private UserInfo user;
 
+
     public LibertyOAuth2User(UserInfo user) {
         this.user = user;
     }
@@ -33,6 +34,9 @@ public class LibertyOAuth2User implements OAuth2User {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole());
         authorities.add(authority);
+        if (user.getRole().equals("ADVANCED")) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADVANCED"));
+        }
         return authorities;
     }
 
