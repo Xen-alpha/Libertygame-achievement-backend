@@ -1,17 +1,21 @@
 package org.libertymedia.libertyachievement.util;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.libertymedia.libertyachievement.user.UserRepository;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
@@ -38,6 +42,9 @@ public class JwtUtil {
             return UserInfo.builder()
                     .userIdx(claims.get("userIdx", Long.class))
                     .username(claims.get("username", String.class))
+                    .role(claims.get("role", String.class))
+                    .notBlocked(claims.get("notBlocked", Boolean.class))
+                    .expiresAt(ZonedDateTime.ofInstant(Instant.ofEpochMilli(claims.get("exp", Long.class)), ZoneId.systemDefault()))
                     .build();
 
         } catch (ExpiredJwtException e) {
@@ -46,16 +53,37 @@ public class JwtUtil {
         }
     }
 
-    public static String generateToken(Long userIdx, String userEmail) {
+    public static String generateToken(Long userIdx, String userName, String userEmail, String role, Boolean notBlocked) {
         Claims claims = Jwts.claims();
 
         claims.put("userEmail", userEmail);
-
+        claims.put("userName", userName);
         claims.put("userIdx", userIdx);
+        claims.put("role", role);
+        claims.put("notBlocked", notBlocked);
+        claims.put("exp", System.currentTimeMillis() + EXP);
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + EXP))
+                .signWith(SignatureAlgorithm.HS256, SECRET)
+                .compact();
+        return token;
+    }
+
+    public static String generateRefreshToken(Long userIdx, String userName, String userEmail, String role, Boolean notBlocked) {
+        Claims claims = Jwts.claims();
+
+        claims.put("userEmail", userEmail);
+        claims.put("userName", userName);
+        claims.put("userIdx", userIdx);
+        claims.put("role", role);
+        claims.put("notBlocked", notBlocked);
+        claims.put("exp", System.currentTimeMillis() + EXP * 7L);
+        String token = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + EXP * 7L))
                 .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
         return token;
@@ -70,6 +98,12 @@ public class JwtUtil {
                     .getBody();
         } catch (ExpiredJwtException e) {
             System.out.println("토큰이 만료되었습니다!");
+            return false;
+        } catch (MalformedJwtException e) {
+            System.out.println("토큰이 잘못되었습니다!");
+            return false;
+        } catch (SecurityException e) {
+            System.out.println("토큰 서명이 잘못되었습니다!");
             return false;
         }
         return true;
