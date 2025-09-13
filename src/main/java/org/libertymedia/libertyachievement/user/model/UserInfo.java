@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -43,8 +44,11 @@ public class UserInfo implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority(role);
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_BASIC");
         authorities.add(authority);
+        if (role.equals("ADVANCED")) {
+            authorities.add(new SimpleGrantedAuthority("ROLE_ADVANCED"));
+        }
         return authorities;
     }
 
@@ -60,8 +64,12 @@ public class UserInfo implements UserDetails {
     private Long userIdx;
     @Column(unique = true, nullable = false)
     private String username;
-    @Column(unique = true, nullable = false)
-    private String password; // 귀찮게도 추후의 자체 회원 시스템을 대비하려면 UserDetails 상속과 함께 이것을 남겨야 할 것이다.
+    @Column( nullable = false)
+    private String password; // 지금은 액세스 토큰 보관용
+    @Column(nullable = true)
+    private ZonedDateTime expiresAt; // 평상시에는 nullable 상태로
+    @Column(nullable = false)
+    private String refreshToken;
 
     private String email;
     @Column(nullable = false)

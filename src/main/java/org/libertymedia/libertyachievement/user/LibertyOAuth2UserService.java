@@ -2,8 +2,11 @@ package org.libertymedia.libertyachievement.user;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.libertymedia.libertyachievement.config.filter.AuthSuccessHandler;
 import org.libertymedia.libertyachievement.user.model.LibertyOAuth2User;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -12,7 +15,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.time.ZoneId;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static java.lang.Long.parseLong;
@@ -23,6 +28,7 @@ public class LibertyOAuth2UserService
         implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepository;
+    private final Logger logger = LoggerFactory.getLogger(LibertyOAuth2UserService.class);
 
     private final DefaultOAuth2UserService defaultOAuth2UserService
             = new DefaultOAuth2UserService();
@@ -34,13 +40,16 @@ public class LibertyOAuth2UserService
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String username = (String) attributes.get("username");
         UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
+        logger.info("loading user {}", username);
         if (userInfo == null) {
             String email = (String) attributes.get("email");
             Long idx = parseLong((String) attributes.get("sub"));
             Boolean blocked = (Boolean) attributes.get("blocked");
-            return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(blocked).username(username).email(email).password(UUID.randomUUID().toString()).role("BASIC").build()));
+            return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(blocked).username(username).password(userRequest.getAccessToken().getTokenValue()).email(email).role("BASIC").build()));
+        } else {
+            userInfo.setEmail((String) attributes.get("email"));
+            userInfo.setNotBlocked((Boolean) attributes.get("blocked"));
+            return new LibertyOAuth2User(userRepository.save(userInfo));
         }
-
-        return oAuth2User;
     }
 }

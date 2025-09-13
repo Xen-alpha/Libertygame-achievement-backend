@@ -20,16 +20,22 @@ public class UserController {
     public ResponseEntity<String> getMyName(@AuthenticationPrincipal UserInfo user) {
         return ResponseEntity.ok(user.getUsername());
     }
+
+    @Operation(description="로그인 리다이렉션")
+    @PostMapping
+    public ResponseEntity<String> loginSuccess(@AuthenticationPrincipal UserInfo user) {
+        return ResponseEntity.ok("도전과제 서버 로그인 완료");
+    }
     
     @Operation(description="로그아웃 리다이렉션")
     @PostMapping("/logout")
     public ResponseEntity<String> logout() {
-        return ResponseEntity.ok("logout");
+        return ResponseEntity.ok("도전과제 서버 로그아웃 완료");
     }
 
     @Operation(description="도전과제 제작자로 승급하는 요청을 테이블에 저장합니다.")
     @PostMapping("/promote")
-    public ResponseEntity<String> promote(@AuthenticationPrincipal UserInfo user, @Valid @RequestBody PromotionRequest request) {
+    public ResponseEntity<String> promote(@AuthenticationPrincipal UserInfo user, @RequestBody PromotionRequest request) {
         try {
             userService.createPromotion(request);
         } catch (Exception e) {
