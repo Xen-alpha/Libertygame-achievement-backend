@@ -21,10 +21,13 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
     @Value("${OAUTH_CLIENT_ID}")
     private String OAUTH_CLIENT_ID;
 
+    @Value("${spring.security.oauth2.client.registration.libertygame.redirect-uri}")
+    private String redirectUri;
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         //redirect to OAuth 2.0 again
-        logger.info("Authentication Failed");
-        response.sendRedirect("/rest.php/oauth2/authorize?response_type=code&client_id="+OAUTH_CLIENT_ID); // 웹 앱 내부 오류의 경우 이 때문에 허가 페이지 연결하는 무한 루프를 돈다.
+        logger.info("Authentication Failed: {}", exception.getMessage());
+        response.sendRedirect("/rest.php/oauth2/authorize?response_type=code&client_id="+OAUTH_CLIENT_ID + "&redirect_uri="+ redirectUri); // 웹 앱 내부 오류의 경우 이 때문에 허가 페이지 연결하는 무한 루프를 돈다.
     }
 }

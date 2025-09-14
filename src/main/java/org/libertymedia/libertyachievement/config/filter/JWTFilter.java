@@ -46,7 +46,6 @@ public class JWTFilter extends OncePerRequestFilter {
                 Instant now = Instant.now();
                 Instant expires = user.getExpiresAt().toInstant();
                 if (now.isBefore(expires)) {
-                    String username = user.getUsername();
                     UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     identityToken.setDetails(user);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
