@@ -55,7 +55,7 @@ public class SecurityConfig {
         ).csrf(AbstractHttpConfigurer::disable
         ).headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
         ).sessionManagement(AbstractHttpConfigurer::disable // v0.5.3 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
-        ).addFilterAt(jwtFilter, UsernamePasswordAuthenticationFilter.class
+        ).addFilterAfter(jwtFilter, LogoutFilter.class
         );
 
         return http.build();
