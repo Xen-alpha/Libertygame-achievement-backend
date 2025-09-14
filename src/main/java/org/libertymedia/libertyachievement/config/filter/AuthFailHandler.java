@@ -17,6 +17,6 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         //redirect to OAuth 2.0 again
-        response.sendRedirect("/login");
+        response.sendRedirect("/api/login");
     }
 }
