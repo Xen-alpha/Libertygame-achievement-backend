@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
 import org.springframework.web.cors.CorsConfiguration;
@@ -32,6 +33,8 @@ public class SecurityConfig {
     private final JWTFilter jwtFilter;
     private final AuthSuccessHandler authSuccessHandler;
     private final AuthFailHandler authFailHandler;
+
+
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
@@ -52,7 +55,7 @@ public class SecurityConfig {
         ).csrf(AbstractHttpConfigurer::disable
         ).headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
         ).sessionManagement(AbstractHttpConfigurer::disable // v0.5.3 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
-        ).addFilterAfter(jwtFilter, LogoutFilter.class
+        ).addFilterAt(jwtFilter, UsernamePasswordAuthenticationFilter.class
         );
 
         return http.build();
