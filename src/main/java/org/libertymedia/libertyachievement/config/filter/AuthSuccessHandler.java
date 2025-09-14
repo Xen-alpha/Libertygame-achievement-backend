@@ -46,7 +46,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .maxAge(exp) // 유효시간
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        logger.info("Successfully authenticated user: " + user.getUsername());
+        logger.info("Successfully authenticated user: {}", user.getUsername());
         response.sendRedirect("/api/user");
 
     }
