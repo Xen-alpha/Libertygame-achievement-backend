@@ -57,7 +57,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .secure(true)
                 .maxAge(exp)
                 .build();
-        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         // JSESSIONID 제거
         ResponseCookie jsessionIdCookie = ResponseCookie
                 .from("JSESSIONID", "")
