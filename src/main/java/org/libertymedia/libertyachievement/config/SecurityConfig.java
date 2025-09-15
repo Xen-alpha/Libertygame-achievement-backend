@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -45,17 +46,18 @@ public class SecurityConfig {
                         .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/login/*", "/logout", "/", "/swagger-ui/index.html", "/v3/**", "/user").permitAll()
                         .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user/**").hasRole("BASIC")
                         .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user/**").hasRole("ADVANCED")
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
         ).oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
-        ).logout(l -> l.clearAuthentication(true).deleteCookies("JSESSIONID").logoutSuccessUrl("/user/logout").permitAll()
+        ).logout(l -> l.clearAuthentication(true).deleteCookies("AccessToken").logoutSuccessUrl("/user/logout").permitAll()
         ).formLogin(AbstractHttpConfigurer::disable
         ).csrf(AbstractHttpConfigurer::disable
         ).headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
-        ).sessionManagement(AbstractHttpConfigurer::disable // v0.5.3 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
-        ).addFilterAfter(jwtFilter, LogoutFilter.class
+        ).sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
+        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
         );
 
         return http.build();
