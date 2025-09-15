@@ -26,8 +26,9 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        //redirect to OAuth 2.0 again
-        logger.info("Authentication Failed: {}", exception.getMessage());
-        response.sendRedirect("/rest.php/oauth2/authorize?response_type=code&client_id="+OAUTH_CLIENT_ID + "&redirect_uri="+ redirectUri); // 웹 앱 내부 오류의 경우 이 때문에 허가 페이지 연결하는 무한 루프를 돈다.
+        logger.error("OAuth2 failure: ", exception);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\": \"OAuth2 login failed: " + exception.getMessage() + "\"}");
     }
 }

@@ -1,11 +1,13 @@
 package org.libertymedia.libertyachievement.config.filter;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.user.UserRepository;
 
+import org.libertymedia.libertyachievement.user.model.LibertyOAuth2User;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.slf4j.Logger;
@@ -19,6 +21,9 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
@@ -27,27 +32,67 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     @Value("${jwt.expired}")
     private int exp;
 
+    @Value("${HOST_DOMAIN}")
+    private String host;
+
     private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
     private final UserRepository userRepository;
+
+
     // OAuth2가 성공했을 때의 행동: OAuth2 과정 도중 아직 도전과제 사용하지 않은 사용자면 DB에 UserInfo 정보가 생성되므로 그냥 여기서 Access Token 발급 후 Refresh Token 저장하고 리다이렉트
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        UserInfo user = (UserInfo) authentication.getPrincipal();
-        String refreshToken = JwtUtil.generateRefreshToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
-        user.setRefreshToken(refreshToken);
+        LibertyOAuth2User user = (LibertyOAuth2User) authentication.getPrincipal();
+        String refreshToken = JwtUtil.generateRefreshToken(user.getUser().getUserIdx(), user.getUser().getUsername(), user.getUser().getEmail(), user.getUser().getRole(), user.getUser().getNotBlocked());
+        user.getUser().setRefreshToken(refreshToken);
         // make 'ATOKEN' Cookie and give it to client
-        String token = JwtUtil.generateToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
-        user.setPassword(token); // 액세스 토큰 저장
-        userRepository.save(user);
-        ResponseCookie cookie = ResponseCookie.from("AccessTOKEN", token)
+        String token = JwtUtil.generateToken(user.getUser().getUserIdx(), user.getUser().getUsername(), user.getUser().getEmail(), user.getUser().getRole(), user.getUser().getNotBlocked());
+        user.getUser().setPassword(token); // 액세스 토큰 저장
+        userRepository.save(user.getUser());
+        // 쿠키에 토큰 설정
+        ResponseCookie cookie = ResponseCookie
+                .from("AccessTOKEN", token)
                 .path("/")
                 .httpOnly(true)
                 .secure(true)
-                .maxAge(exp) // 유효시간
+                .maxAge(exp)
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        logger.info("Successfully authenticated user: " + user.getUsername());
-        response.sendRedirect("/api/user");
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        // JSESSIONID 제거
+        ResponseCookie jsessionIdCookie = ResponseCookie
+                .from("JSESSIONID", "")
+                .path("/")
+                .httpOnly(true)
+                .secure(false)
+                .maxAge(0) // 즉시 만료
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
+
+        logger.info("Successfully authenticated user: {}", user.getUser().getUsername());
+
+        String state = request.getParameter("state");
+        String redirectUrl = "https://" + host;
+        if (state != null && !state.isEmpty()) {
+            try {
+                String decodedUrl = URLDecoder.decode(state, StandardCharsets.UTF_8);
+                if (decodedUrl.startsWith("https://dev.libertygame.work")) {
+                    redirectUrl = decodedUrl;
+                    logger.info("Redirecting to original URL: {}", redirectUrl);
+                } else {
+                    logger.warn("Invalid redirect URL: {}", decodedUrl);
+                }
+            } catch (Exception e) {
+                logger.error("Failed to decode state parameter: {}", state, e);
+            }
+        } else {
+            logger.warn("No state parameter found, using default redirect: {}", redirectUrl);
+        }
+        if (request.getSession(false) != null) {
+            request.getSession().invalidate();
+            logger.info("Invalidated existing session");
+        }
+
+        response.sendRedirect(redirectUrl);
 
     }
 }

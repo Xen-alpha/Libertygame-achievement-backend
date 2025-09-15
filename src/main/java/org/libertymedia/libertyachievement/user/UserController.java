@@ -22,9 +22,8 @@ public class UserController {
     }
 
     @Operation(description="로그인 리다이렉션")
-    @GetMapping
     @PostMapping
-    public ResponseEntity<String> loginSuccess(@AuthenticationPrincipal UserInfo user) {
+    public ResponseEntity<String> loginSuccess() {
         return ResponseEntity.ok("도전과제 서버 로그인 완료");
     }
     
