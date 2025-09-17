@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.libertymedia.libertyachievement.util.JwtUtil;
@@ -29,6 +28,7 @@ import java.util.Objects;
 @Slf4j
 public class JWTFilter extends OncePerRequestFilter {
     private final UserRepository userRepository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = null;
@@ -59,7 +59,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     log.debug("user {} authenticated", user.getIdx());
                 } else {
                     log.debug("user {} expired", user.getIdx());
-                    if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET")) {
+                    if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET") || request.getMethod().equals("POST")) {
                         filterChain.doFilter(request, response);
                     } else {
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -68,7 +68,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }
             else {
                 log.debug("no user");
-                if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET")) {
+                if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET") || request.getMethod().equals("POST")) {
                     filterChain.doFilter(request, response);
                 } else {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -99,11 +99,18 @@ public class JWTFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
                     log.debug("user {} refreshed", user.getIdx());
                 }
+            } else {
+                log.debug("no user");
+                if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET") || request.getMethod().equals("POST")) {
+                    filterChain.doFilter(request, response);
+                } else {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                }
             }
         }
         else {
             log.debug("no token, access to anonymous user");
-            if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET")) {
+            if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET") || request.getMethod().equals("POST")) {
                 filterChain.doFilter(request, response);
             } else {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
