@@ -41,7 +41,7 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
-        return ResponseEntity.ok("승급 요청 기록됨, 등록된 이메일로 을 확인하세요!");
+        return ResponseEntity.ok("승급 요청 기록됨, 등록된 이메일로 승급 확인 링크를 확인하세요!");
     }
 
     @Operation(description="도전과제 수행자에서 도전과제 제작자로 승급하는 요청을 수행합니다.")
