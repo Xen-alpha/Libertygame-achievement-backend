@@ -37,12 +37,12 @@ public class LibertyOAuth2UserService
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String username = (String) attributes.get("username");
         UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
-        logger.info("loading user {}", username);
+        logger.debug("loading user {}", username);
         if (userInfo == null) {
             String email = (String) attributes.get("email");
             Long idx = parseLong((String) attributes.get("sub"));
             Boolean blocked = (Boolean) attributes.get("blocked");
-            return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(blocked).username(username).email(email).role("BASIC").build()));
+            return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(!blocked).username(username).email(email).role("BASIC").build()));
         } else {
             userInfo.setEmail((String) attributes.get("email"));
             userInfo.setNotBlocked((Boolean) attributes.get("blocked"));

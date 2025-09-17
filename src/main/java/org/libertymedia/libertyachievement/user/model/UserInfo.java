@@ -21,24 +21,10 @@ import java.util.List;
 @Builder
 @Schema(description="사용자 정보")
 public class UserInfo implements UserDetails {
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
 
     @Override
     public boolean isAccountNonLocked() {
         return this.notBlocked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
     @Override

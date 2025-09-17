@@ -51,7 +51,7 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
-        ).logout(l -> l.clearAuthentication(true).deleteCookies("AccessToken").logoutSuccessUrl("/user/logout").permitAll()
+        ).logout(l -> l.clearAuthentication(true).deleteCookies("AccessTOKEN").logoutSuccessUrl("/user/logout").permitAll()
         ).formLogin(AbstractHttpConfigurer::disable
         ).csrf(AbstractHttpConfigurer::disable
         ).headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)

@@ -79,11 +79,11 @@ public class JwtUtil {
         claims.put("userIdx", userIdx);
         claims.put("role", role);
         claims.put("notBlocked", notBlocked);
-        claims.put("exp", System.currentTimeMillis() + EXP * 7L);
+        claims.put("exp", System.currentTimeMillis() + EXP * 28L);
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + EXP * 7L))
+                .setExpiration(new Date(System.currentTimeMillis() + EXP * 28L))
                 .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
         return token;
