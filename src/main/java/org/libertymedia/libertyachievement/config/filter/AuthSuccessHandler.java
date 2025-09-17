@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.time.ZonedDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -48,6 +49,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         // make 'ATOKEN' Cookie and give it to client
         String token = JwtUtil.generateToken(user.getUser().getUserIdx(), user.getUser().getUsername(), user.getUser().getEmail(), user.getUser().getRole(), user.getUser().getNotBlocked());
         user.getUser().setPassword(token); // 액세스 토큰 저장
+        user.getUser().setExpiresAt(ZonedDateTime.now().plusMonths(1L));
         userRepository.save(user.getUser());
         // 쿠키에 토큰 설정
         ResponseCookie cookie = ResponseCookie
