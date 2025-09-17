@@ -45,17 +45,12 @@ spring:
     oauth2:
       client:
         registration:
-          libertygame: # 주의: scope
+          libertygame: # 주의: scope 없어야 함
             client-id: ${OAUTH_CLIENT_ID}
             client-secret: ${OAUTH_CLIENT_SECRET}
             redirect-uri: ${HOST_DOMAIN}/login/oauth2/code/libertygame
             authorization-grant-type: authorization_code
             client-authentication-method: none
-            scope:
-              - sub
-              - username
-              - email
-              - blocked
             provider: libertygame
         provider:
           libertygame:
