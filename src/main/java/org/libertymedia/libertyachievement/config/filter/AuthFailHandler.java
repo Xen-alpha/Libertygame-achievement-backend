@@ -18,12 +18,6 @@ import java.io.IOException;
 public class AuthFailHandler implements AuthenticationFailureHandler {
     private final Logger logger = LoggerFactory.getLogger(AuthFailHandler.class);
 
-    @Value("${OAUTH_CLIENT_ID}")
-    private String OAUTH_CLIENT_ID;
-
-    @Value("${spring.security.oauth2.client.registration.libertygame.redirect-uri}")
-    private String redirectUri;
-
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         logger.error("OAuth2 failure: ", exception);
