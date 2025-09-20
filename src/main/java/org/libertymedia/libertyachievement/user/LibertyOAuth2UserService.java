@@ -45,7 +45,7 @@ public class LibertyOAuth2UserService
             return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(!blocked).username(username).email(email).role("BASIC").build()));
         } else {
             userInfo.setEmail((String) attributes.get("email"));
-            userInfo.setNotBlocked((Boolean) attributes.get("blocked"));
+            userInfo.setNotBlocked(!((Boolean) attributes.get("blocked")));
             return new LibertyOAuth2User(userRepository.save(userInfo));
         }
     }

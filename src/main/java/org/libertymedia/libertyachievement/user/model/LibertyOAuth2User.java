@@ -19,7 +19,7 @@ public class LibertyOAuth2User implements OAuth2User {
 
     @Override
     public Map<String, Object> getAttributes() {
-        return Map.of("sub", user.getUserIdx().toString(),"username", user.getUsername(),  "email", user.getEmail(),  "blocked", user.getNotBlocked());
+        return Map.of("sub", user.getUserIdx().toString(),"username", user.getUsername(),  "email", user.getEmail(),  "blocked", !user.getNotBlocked());
     }
 
     @Override
