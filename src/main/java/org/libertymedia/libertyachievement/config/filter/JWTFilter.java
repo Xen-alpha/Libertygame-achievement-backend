@@ -56,23 +56,15 @@ public class JWTFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     identityToken.setDetails(user);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
-                    log.debug("user {} authenticated", user.getIdx());
+                    log.info("user {} authenticated", user.getIdx());
                 } else {
-                    log.debug("user {} expired", user.getIdx());
-                    if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET") || request.getMethod().equals("POST")) {
-                        filterChain.doFilter(request, response);
-                    } else {
-                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    }
+                    log.info("user {} expired", user.getIdx());
+                    filterChain.doFilter(request, response);
                 }
             }
             else {
-                log.debug("no user");
-                if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET") || request.getMethod().equals("POST")) {
-                    filterChain.doFilter(request, response);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                }
+                log.info("no user");
+                filterChain.doFilter(request, response);
             }
         } else if (username != null) {
             UserInfo user = userRepository.findByUsername(username).orElse(null);
@@ -101,20 +93,12 @@ public class JWTFilter extends OncePerRequestFilter {
                 }
             } else {
                 log.debug("no user");
-                if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET") || request.getMethod().equals("POST")) {
-                    filterChain.doFilter(request, response);
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                }
+                filterChain.doFilter(request, response);
             }
         }
         else {
             log.debug("no token, access to anonymous user");
-            if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET") || request.getMethod().equals("POST")) {
-                filterChain.doFilter(request, response);
-            } else {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            }
+            filterChain.doFilter(request, response);
         }
     }
 
