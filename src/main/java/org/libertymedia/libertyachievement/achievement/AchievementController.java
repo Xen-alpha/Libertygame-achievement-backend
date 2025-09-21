@@ -38,24 +38,24 @@ public class AchievementController {
     @Operation(description="편집 도전과제 진행도를 달성하고 그 결과를 반환합니다.")
     @PutMapping("/edit")
     public ResponseEntity<List<AchievementResponse>> editAchievement(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
-        return ResponseEntity.ok(achievementService.achieveEditProgress(body));
+        return ResponseEntity.ok(achievementService.achieveEditProgress(user.getUsername(), body));
     }
 
     @Operation(description="평가 도전과제 진행도를 달성하고 그 결과를 반환합니다.")
     @PutMapping("/rate")
     public ResponseEntity<List<AchievementResponse>> rateAchievement(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
-        return ResponseEntity.ok(achievementService.achieveRateProgress(body));
+        return ResponseEntity.ok(achievementService.achieveRateProgress(user.getUsername(),body));
     }
     @Operation(description="파일 도전과제 진행도를 달성하고 그 결과를 반환합니다.")
     @PutMapping("/file")
     public ResponseEntity<List<AchievementResponse>> fileAchievement(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
-        return ResponseEntity.ok(achievementService.achieveFileProgress(body));
+        return ResponseEntity.ok(achievementService.achieveFileProgress(user.getUsername(),body));
     }
 
     @Operation(description="토론 도전과제 진행도를 달성하고 그 결과를 반환합니다.")
     @PutMapping("/talk")
     public ResponseEntity<List<AchievementResponse>> talkAchievement(@AuthenticationPrincipal UserInfo user, @RequestBody AchieveRequest body) {
-        return ResponseEntity.ok(achievementService.achieveTalkProgress(body));
+        return ResponseEntity.ok(achievementService.achieveTalkProgress(user.getUsername(),body));
     }
     //-------------------------------- GET -----------------------------------
     @Operation(description="특정 사용자의 도전과제 진행도 목록을 봅니다.")

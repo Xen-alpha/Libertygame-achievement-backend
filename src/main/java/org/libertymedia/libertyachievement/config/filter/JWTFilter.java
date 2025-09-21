@@ -57,6 +57,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     identityToken.setDetails(user);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
                     log.info("user {} authenticated", user.getIdx());
+                    filterChain.doFilter(request, response);
                 } else {
                     log.info("user {} expired", user.getIdx());
                     filterChain.doFilter(request, response);
