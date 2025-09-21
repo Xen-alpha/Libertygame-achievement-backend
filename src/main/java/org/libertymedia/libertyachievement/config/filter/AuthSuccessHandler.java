@@ -66,8 +66,10 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .maxAge(0) // 즉시 만료
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
-        authentication.setAuthenticated(true);
         logger.info("Successfully authenticated user: {}", user.getUser().getUsername());
-
+        String redirectUrl = request.getHeader("Referer");
+        if (redirectUrl != null) {
+            response.sendRedirect(redirectUrl);
+        }
     }
 }
