@@ -73,7 +73,7 @@ public class SecurityConfig {
         corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "https://libertygame.work", "https://libertyga.me", "http://localhost"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowCredentials(true);
-        corsConfig.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type"));
+        corsConfig.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Cookie", "Set-Cookies", "Referer", "Content-Length"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);

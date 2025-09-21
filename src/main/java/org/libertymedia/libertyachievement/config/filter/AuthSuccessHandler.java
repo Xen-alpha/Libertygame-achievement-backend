@@ -21,9 +21,6 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.time.ZonedDateTime;
 
 @Component
@@ -69,7 +66,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .maxAge(0) // 즉시 만료
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
-
+        authentication.setAuthenticated(true);
         logger.info("Successfully authenticated user: {}", user.getUser().getUsername());
 
     }
