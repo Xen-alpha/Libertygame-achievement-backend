@@ -73,16 +73,11 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         logger.info("Successfully authenticated user: {}", user.getUser().getUsername());
 
         String state = request.getParameter("state");
-        String redirectUrl = "https://" + host;
+        String redirectUrl = host;
         if (state != null && !state.isEmpty()) {
             try {
-                String decodedUrl = URLDecoder.decode(state, StandardCharsets.UTF_8);
-                if (decodedUrl.startsWith("https://dev.libertygame.work")) {
-                    redirectUrl = decodedUrl;
-                    logger.info("Redirecting to original URL: {}", redirectUrl);
-                } else {
-                    logger.warn("Invalid redirect URL: {}", decodedUrl);
-                }
+                redirectUrl = URLDecoder.decode(state, StandardCharsets.UTF_8);
+                logger.info("Redirecting to original URL: {}", redirectUrl);
             } catch (Exception e) {
                 logger.error("Failed to decode state parameter: {}", state, e);
             }
