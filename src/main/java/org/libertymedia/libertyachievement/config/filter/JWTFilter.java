@@ -81,7 +81,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     // 쿠키에 다시 토큰 설정
                     ResponseCookie cookie = ResponseCookie
                             .from("AccessTOKEN", newToken)
-                            .path("/")
+                            .path("/api")
                             .httpOnly(true)
                             .secure(true)
                             .maxAge(Duration.ofHours(12L))
