@@ -48,12 +48,12 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         // make 'ATOKEN' Cookie and give it to client
         String token = JwtUtil.generateToken(user.getUser().getUserIdx(), user.getUser().getUsername(), user.getUser().getEmail(), user.getUser().getRole(), user.getUser().getNotBlocked());
         user.getUser().setPassword(token); // 액세스 토큰 저장
-        user.getUser().setExpiresAt(ZonedDateTime.now().plusHours(12));
+        user.getUser().setExpiresAt(ZonedDateTime.now().plusHours(12L));
         userRepository.save(user.getUser());
         // 쿠키에 토큰 설정
         ResponseCookie cookie = ResponseCookie
                 .from("AccessTOKEN", token)
-                .path("/")
+                .path("/api")
                 .httpOnly(true)
                 .secure(true)
                 .maxAge(exp)
