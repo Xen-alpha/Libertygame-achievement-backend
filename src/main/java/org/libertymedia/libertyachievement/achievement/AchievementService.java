@@ -107,29 +107,29 @@ public class AchievementService {
         return result;
     }
 
-    public List<AchievementResponse> achieveEditProgress(@Valid AchieveRequest body) {
+    public List<AchievementResponse> achieveEditProgress(String userName,  AchieveRequest body) {
         List<Achievement> targets = achievementRepository.findByCreatedBy("Achieve_Edit");
-        return processAchievement(targets, body.getUsername());
+        return processAchievement(targets, userName);
     }
 
-    public List<AchievementResponse> achieveRateProgress(@Valid AchieveRequest body) {
+    public List<AchievementResponse> achieveRateProgress(String userName, AchieveRequest body) {
         List<Achievement> targets = achievementRepository.findByCreatedBy("Achieve_Rate");
-        return processAchievement(targets, body.getUsername());
+        return processAchievement(targets, userName);
     }
 
-    public List<AchievementResponse> achieveFileProgress(@Valid AchieveRequest body) {
+    public List<AchievementResponse> achieveFileProgress(String userName,AchieveRequest body) {
         List<Achievement> targets = achievementRepository.findByCreatedBy("Achieve_Upload");
-        return processAchievement(targets, body.getUsername());
+        return processAchievement(targets, userName);
     }
 
-    public List<AchievementResponse> achieveTalkProgress(@Valid AchieveRequest body) {
+    public List<AchievementResponse> achieveTalkProgress(String userName,AchieveRequest body) {
         List<Achievement> targets = achievementRepository.findByCreatedBy("Achieve_Talk");
-        return processAchievement(targets, body.getUsername());
+        return processAchievement(targets, userName);
     }
 
-    public List<AchievementResponse> getGameAchievements(String username, String gameName) {
+    public List<AchievementResponse> getGameAchievements(String userName, String gameName) {
         List<Achievement> targets = achievementRepository.findByGameName(gameName);
-        UserInfo user = userRepository.findByUsername(username).orElse(null);
+        UserInfo user = userRepository.findByUsername(userName).orElse(null);
         List<AchievementResponse> result = new ArrayList<>();
         if (user == null) {
             return result;

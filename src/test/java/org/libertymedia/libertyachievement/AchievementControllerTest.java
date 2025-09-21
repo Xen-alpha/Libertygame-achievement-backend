@@ -47,7 +47,7 @@ public class AchievementControllerTest {
     public void controllerTest() {
         // Controller Test
 
-        when(achievementService.achieveEditProgress(editAchievementRequest)).thenReturn(
+        when(achievementService.achieveEditProgress("Senouis", editAchievementRequest)).thenReturn(
                 List.of(AchievementResponse.builder().title("10회 편집 달성").description("축하합니다! 10회 편집 횟수를 달성했습니다!").progress(1).maxprogress(10).build(),
                         AchievementResponse.builder().title("100회 편집 달성").description("축하합니다! 100회 편집 횟수를 달성했습니다!").progress(1).maxprogress(100).build(),
                         AchievementResponse.builder().title("1000회 편집 달성").description("축하합니다! 1000회 편집 횟수를 달성했습니다!").progress(1).maxprogress(1000).build(),
