@@ -5,6 +5,8 @@ import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.user.UserRepository;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +25,8 @@ public class JwtUtil {
 
     @Value("${jwt.expired}")
     private int exp;
+
+    private static Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
     private static int EXP;
 
@@ -44,11 +48,12 @@ public class JwtUtil {
                     .username(claims.get("username", String.class))
                     .role(claims.get("role", String.class))
                     .notBlocked(claims.get("notBlocked", Boolean.class))
+                    .email(claims.get("userEmail", String.class))
                     .expiresAt(ZonedDateTime.ofInstant(Instant.ofEpochMilli(claims.get("exp", Long.class)), ZoneId.systemDefault()))
                     .build();
 
         } catch (ExpiredJwtException e) {
-            System.out.println("토큰이 만료되었습니다!");
+            logger.debug("토큰이 만료되었습니다!");
             return null;
         }
     }
@@ -97,13 +102,13 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            System.out.println("토큰이 만료되었습니다!");
+            logger.debug("토큰이 만료되었습니다!");
             return false;
         } catch (MalformedJwtException e) {
-            System.out.println("토큰이 잘못되었습니다!");
+            logger.debug("토큰이 잘못되었습니다!");
             return false;
         } catch (SecurityException e) {
-            System.out.println("토큰 서명이 잘못되었습니다!");
+            logger.debug("토큰 서명이 잘못되었습니다!");
             return false;
         }
         return true;
