@@ -91,6 +91,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     identityToken.setDetails(user);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
                     log.info("user {} refreshed", user.getIdx());
+                    filterChain.doFilter(request, response);
                 }
             } else {
                 log.info("no user info");
