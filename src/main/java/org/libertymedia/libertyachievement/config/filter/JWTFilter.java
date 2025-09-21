@@ -89,15 +89,15 @@ public class JWTFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     identityToken.setDetails(user);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
-                    log.debug("user {} refreshed", user.getIdx());
+                    log.info("user {} refreshed", user.getIdx());
                 }
             } else {
-                log.debug("no user");
+                log.info("no user info");
                 filterChain.doFilter(request, response);
             }
         }
         else {
-            log.debug("no token, access to anonymous user");
+            log.info("no token, access to anonymous user");
             filterChain.doFilter(request, response);
         }
     }

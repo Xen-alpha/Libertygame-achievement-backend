@@ -50,13 +50,13 @@ public class UserInfo implements UserDetails {
     private Long userIdx;
     @Column(unique = true, nullable = false)
     private String username;
-    @Column( nullable = false)
+    @Column(nullable = true)
     private String password; // 지금은 액세스 토큰 보관용
     @Column(nullable = true)
     private ZonedDateTime expiresAt; // 평상시에는 nullable 상태로
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String refreshToken;
-
+    @Column(nullable = true)
     private String email;
     @Column(nullable = false)
     private String role;
