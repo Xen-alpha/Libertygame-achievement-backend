@@ -69,16 +69,16 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", user.getUser().getUsername());
-        String state = request.getParameter("state");
         String redirectUrl = request.getRequestURI();
-        if (state != null && !state.isEmpty()) {
+        if (redirectUrl != null && !redirectUrl.isEmpty()) {
             try {
-                redirectUrl = URLDecoder.decode(state, StandardCharsets.UTF_8);
+                redirectUrl = URLDecoder.decode(redirectUrl, StandardCharsets.UTF_8);
                 logger.info("Redirecting to original URL: {}", redirectUrl);
             } catch (Exception e) {
-                logger.error("Failed to decode state parameter: {}", state, e);
+                logger.error("Failed to decode state parameter: {}", redirectUrl, e);
             }
         } else {
+            redirectUrl = host;
             logger.warn("No state parameter found, using default redirect: {}", redirectUrl);
         }
         if (request.getSession(false) != null) {
