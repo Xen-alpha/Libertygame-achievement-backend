@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.config.filter.AuthFailHandler;
 import org.libertymedia.libertyachievement.config.filter.AuthSuccessHandler;
 import org.libertymedia.libertyachievement.config.filter.JWTFilter;
+import org.libertymedia.libertyachievement.config.filter.LoginRoutingFilter;
 import org.libertymedia.libertyachievement.user.LibertyOAuth2UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +30,7 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+    private final AuthenticationConfiguration authenticationConfiguration;
     private final LibertyOAuth2UserService userService;
     private final JWTFilter jwtFilter;
     private final AuthSuccessHandler authSuccessHandler;
@@ -58,7 +59,7 @@ public class SecurityConfig {
         ).sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
         ).addFilterBefore(jwtFilter, LogoutFilter.class
-        );
+        ).addFilterAt(new LoginRoutingFilter(authenticationConfiguration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
