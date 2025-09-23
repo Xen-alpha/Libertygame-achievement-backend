@@ -1,5 +1,6 @@
 package org.libertymedia.libertyachievement.config.filter;
 
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -27,81 +28,50 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Slf4j
 public class JWTFilter extends OncePerRequestFilter {
-    private final UserRepository userRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = null;
-        String username = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null) {
-            log.debug("No cookies found");
-            filterChain.doFilter(request, response);
-            return;
-        }
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("AccessTOKEN")) {
-                token = cookie.getValue();
-            } else if (cookie.getName().equals("libertyUserName")) {
-                username = cookie.getValue();
-            }
-        }
-        // Get user info and make authentication class
-        if (token != null) {
-            UserInfo user = JwtUtil.getUser(token);
-            if (user != null) {
-                Instant now = Instant.now();
-                Instant expires = user.getExpiresAt().toInstant();
-                if (now.isBefore(expires)) {
-                    UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    identityToken.setDetails(user);
-                    SecurityContextHolder.getContext().setAuthentication(identityToken);
-                    log.info("user {} authenticated", user.getIdx());
-                    filterChain.doFilter(request, response);
-                } else {
-                    log.info("user {} expired", user.getIdx());
-                    filterChain.doFilter(request, response);
+        if (SecurityContextHolder.getContext().getAuthentication() == null) {
+            String token = resolveJwt(request);
+            // Get user info and make authentication class
+            if (token != null) {
+                try {
+                    UserInfo user = JwtUtil.getUser(token);
+                    if (user != null) {
+                        UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
+                        identityToken.setDetails(user);
+                        SecurityContextHolder.getContext().setAuthentication(identityToken);
+                        log.info("user {} authenticated", user.getIdx());
+                    } else {
+                        log.info("no user exists / cookie is expired");
+                    }
+                } catch (JwtException e) {
+                    // do nothing: continue to OAuth2
                 }
-            }
-            else {
-                log.info("no user");
-                filterChain.doFilter(request, response);
-            }
-        } else if (username != null) {
-            UserInfo user = userRepository.findByUsername(username).orElse(null);
-            if (user != null) {
-                UserInfo RTokenInfo = JwtUtil.getUser(user.getRefreshToken());
-                Instant now = Instant.now();
-                Instant expires = Objects.requireNonNull(RTokenInfo).getExpiresAt().toInstant();
-                if (now.isBefore(expires)) {
-                    String newToken = JwtUtil.generateToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
-                    user.setPassword(newToken); // 액세스 토큰 저장
-                    user.setExpiresAt(ZonedDateTime.now().plusHours(12));
-                    userRepository.save(user);
-                    // 쿠키에 다시 토큰 설정
-                    ResponseCookie cookie = ResponseCookie
-                            .from("AccessTOKEN", newToken)
-                            .path("/api")
-                            .httpOnly(true)
-                            .secure(true)
-                            .maxAge(Duration.ofHours(12L))
-                            .build();
-                    response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-                    UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    identityToken.setDetails(user);
-                    SecurityContextHolder.getContext().setAuthentication(identityToken);
-                    log.info("user {} refreshed", user.getIdx());
-                }
-                filterChain.doFilter(request, response);
             } else {
-                log.info("no user info");
-                filterChain.doFilter(request, response);
+                log.info("no token, access to anonymous user");
             }
         }
-        else {
-            log.info("no token, access to anonymous user");
-            filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);
+    }
+
+    private String resolveJwt(HttpServletRequest req) {
+        // HttpOnly 쿠키에서 가져옴
+        if (req.getCookies() != null) {
+            for (Cookie c : req.getCookies()) {
+                if ("AccessTOKEN".equals(c.getName())) return c.getValue();
+            }
         }
+        return null;
+    }
+
+    private String getLibertyUserName(HttpServletRequest req) {
+        if (req.getCookies() != null) {
+            for (Cookie c : req.getCookies()) {
+                if ("libertyUserName".equals(c.getName())) return c.getValue();
+            }
+        }
+        return null;
     }
 
 }

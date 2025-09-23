@@ -26,9 +26,6 @@ import static java.lang.Long.parseLong;
 public class LibertyOAuth2UserService
         implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    @Value("${jwt.expired}")
-    private Long exp;
-
     private final UserRepository userRepository;
     private final Logger logger = LoggerFactory.getLogger(LibertyOAuth2UserService.class);
 

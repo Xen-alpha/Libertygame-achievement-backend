@@ -28,34 +28,26 @@ public class JwtUtil {
 
     private static Logger logger = LoggerFactory.getLogger(JwtUtil.class);
 
-    private static int EXP;
-
     @PostConstruct
     public void init() {
         SECRET = secret;
-        EXP = exp;
+
     }
 
     public static UserInfo getUser(String token) {
-        try {
-            Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(SECRET)
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-            return UserInfo.builder()
-                    .userIdx(claims.get("userIdx", Long.class))
-                    .username(claims.get("username", String.class))
-                    .role(claims.get("role", String.class))
-                    .notBlocked(claims.get("notBlocked", Boolean.class))
-                    .email(claims.get("userEmail", String.class))
-                    .expiresAt(ZonedDateTime.ofInstant(Instant.ofEpochMilli(claims.get("exp", Long.class)), ZoneId.systemDefault()))
-                    .build();
-
-        } catch (ExpiredJwtException e) {
-            logger.debug("토큰이 만료되었습니다!");
-            return null;
-        }
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(SECRET)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return UserInfo.builder()
+                .userIdx(claims.get("userIdx", Long.class))
+                .username(claims.get("username", String.class))
+                .role(claims.get("role", String.class))
+                .notBlocked(claims.get("notBlocked", Boolean.class))
+                .email(claims.get("userEmail", String.class))
+                .expiresAt(ZonedDateTime.ofInstant(Instant.ofEpochMilli(claims.get("exp", Long.class)), ZoneId.systemDefault()))
+                .build();
     }
 
     public static String generateToken(Long userIdx, String userName, String userEmail, String role, Boolean notBlocked) {
@@ -66,11 +58,10 @@ public class JwtUtil {
         claims.put("userIdx", userIdx);
         claims.put("role", role);
         claims.put("notBlocked", notBlocked);
-        claims.put("exp", ZonedDateTime.now().toInstant().toEpochMilli() + EXP);
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(ZonedDateTime.now().toInstant().toEpochMilli()))
-                .setExpiration(new Date(ZonedDateTime.now().toInstant().toEpochMilli() + EXP))
+                .setExpiration(new Date(ZonedDateTime.now().toInstant().toEpochMilli() + 15*60*1000L))
                 .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
         return token;
@@ -84,11 +75,10 @@ public class JwtUtil {
         claims.put("userIdx", userIdx);
         claims.put("role", role);
         claims.put("notBlocked", notBlocked);
-        claims.put("exp", ZonedDateTime.now().toInstant().toEpochMilli() + EXP * 28L);
         String token = Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(ZonedDateTime.now().toInstant().toEpochMilli()))
-                .setExpiration(new Date(ZonedDateTime.now().toInstant().toEpochMilli() + EXP * 28L))
+                .setExpiration(new Date(ZonedDateTime.now().toInstant().toEpochMilli() + 86400*1000*28L))
                 .signWith(SignatureAlgorithm.HS256, SECRET)
                 .compact();
         return token;

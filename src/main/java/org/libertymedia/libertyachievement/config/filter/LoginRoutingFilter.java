@@ -1,8 +1,5 @@
 package org.libertymedia.libertyachievement.config.filter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,18 +8,16 @@ import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Objects;
 
+@Deprecated
 @RequiredArgsConstructor
 public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
