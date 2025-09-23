@@ -46,7 +46,6 @@ public class JwtUtil {
                 .role(claims.get("role", String.class))
                 .notBlocked(claims.get("notBlocked", Boolean.class))
                 .email(claims.get("userEmail", String.class))
-                .expiresAt(ZonedDateTime.ofInstant(Instant.ofEpochMilli(claims.get("exp", Long.class)), ZoneId.systemDefault()))
                 .build();
     }
 

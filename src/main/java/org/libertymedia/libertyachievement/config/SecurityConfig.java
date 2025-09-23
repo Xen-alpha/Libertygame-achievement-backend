@@ -38,9 +38,6 @@ public class SecurityConfig {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
-    @Value("${OAUTH_CLIENT_ID}")
-    private String OAUTH_CLIENT_ID;
-
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
 
@@ -48,14 +45,16 @@ public class SecurityConfig {
         ).headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
         ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
         ).formLogin(AbstractHttpConfigurer::disable
+        ).logout( logout -> logout.deleteCookies("JSESSIONID", "RefreshTOKEN").clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/user/logout").permitAll()
         ).authorizeHttpRequests(
                 (auth) -> auth
-                        .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/login/*", "/logout", "/", "/swagger-ui/index.html", "/v3/**", "/user/refresh").permitAll()
+                        .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/login/*", "/logout", "/", "/swagger-ui/index.html", "/user/logout", "/v3/**", "/user/issue").permitAll()
                         .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("BASIC")
                         .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("ADVANCED")
                         .anyRequest().permitAll()
         ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
         ).oauth2Login(oauth2 -> oauth2
+                .loginPage("/login")
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
