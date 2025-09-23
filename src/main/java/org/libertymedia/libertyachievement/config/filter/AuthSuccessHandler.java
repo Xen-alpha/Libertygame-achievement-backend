@@ -74,19 +74,6 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", user.getUsername());
-        String redirectUrl = request.getRequestURI();
-        if (redirectUrl != null && !redirectUrl.isEmpty()) {
-            redirectUrl = URLDecoder.decode(redirectUrl, StandardCharsets.UTF_8);
-            logger.info("Redirecting to original URL: {}", redirectUrl);
-        } else {
-            redirectUrl = host;
-            logger.warn("No state parameter found, using default redirect: {}", redirectUrl);
-        }
-        if (request.getSession(false) != null) {
-            request.getSession().invalidate();
-            logger.info("Invalidated existing session");
-        }
-
-        response.sendRedirect(redirectUrl);
+        
     }
 }
