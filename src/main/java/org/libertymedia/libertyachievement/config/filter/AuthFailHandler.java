@@ -19,7 +19,7 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        logger.error("OAuth2 failure: ", exception);
+        logger.debug("OAuth2 failure: ", exception);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.getWriter().write("{\"error\": \"OAuth2 login failed: " + exception.getMessage() + "\"}");

@@ -10,12 +10,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 
 import java.io.IOException;
+import java.util.List;
 
 
 @Component
@@ -32,9 +34,8 @@ public class JWTFilter extends OncePerRequestFilter {
                 try {
                     UserInfo user = JwtUtil.getUser(token);
                     if (user != null) {
-                        UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
+                        UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
                         identityToken.setDetails(user);
-                        identityToken.setAuthenticated(true);
                         SecurityContextHolder.getContext().setAuthentication(identityToken);
                         log.info("user {} authenticated", user.getIdx());
                     } else {
@@ -42,6 +43,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     }
                 } catch (JwtException e) {
                     // do nothing: continue to OAuth2
+                    log.info("failed to parse token");
                 }
             } else {
                 log.info("no token, access to anonymous user");
