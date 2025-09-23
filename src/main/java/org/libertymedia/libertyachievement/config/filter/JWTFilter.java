@@ -8,10 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.libertymedia.libertyachievement.user.UserRepository;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -19,10 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.Objects;
+
 
 @Component
 @RequiredArgsConstructor
@@ -40,6 +34,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     if (user != null) {
                         UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
                         identityToken.setDetails(user);
+                        identityToken.setAuthenticated(true);
                         SecurityContextHolder.getContext().setAuthentication(identityToken);
                         log.info("user {} authenticated", user.getIdx());
                     } else {

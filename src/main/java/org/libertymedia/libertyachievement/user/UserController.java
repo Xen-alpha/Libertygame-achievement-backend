@@ -2,6 +2,7 @@ package org.libertymedia.libertyachievement.user;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
@@ -35,7 +36,7 @@ public class UserController {
     
     @Operation(description="로그아웃 리다이렉션")
     @PostMapping("/logout")
-    public ResponseEntity<String> logout() {
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         return ResponseEntity.ok("도전과제 서버 로그아웃 완료");
     }
 

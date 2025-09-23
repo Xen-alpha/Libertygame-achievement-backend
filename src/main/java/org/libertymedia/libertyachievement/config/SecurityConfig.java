@@ -24,6 +24,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
+import java.util.logging.Logger;
 
 @Configuration
 @EnableWebSecurity
@@ -34,6 +35,8 @@ public class SecurityConfig {
     private final JWTFilter jwtFilter;
     private final AuthSuccessHandler authSuccessHandler;
     private final AuthFailHandler authFailHandler;
+
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Value("${OAUTH_CLIENT_ID}")
     private String OAUTH_CLIENT_ID;
@@ -56,11 +59,10 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
-        ).logout(l -> l.clearAuthentication(true).deleteCookies("AccessTOKEN").deleteCookies("RefreshTOKEN").logoutSuccessUrl("/user/logout").permitAll()
         ).exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
+                logger.info("failed to Authenticate");
                 // JWT 없거나 실패 -> OAuth2 로그인 시작
-                res.sendRedirect("/rest.php/oauth2/authorize?response_type=code&client_id="+OAUTH_CLIENT_ID);
             })
         );;
 
