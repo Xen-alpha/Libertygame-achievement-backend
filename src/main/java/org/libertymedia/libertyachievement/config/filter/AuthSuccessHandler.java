@@ -39,14 +39,13 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     // OAuth2가 성공했을 때의 행동: OAuth2 과정 도중 아직 도전과제 사용하지 않은 사용자면 DB에 UserInfo 정보가 생성되므로 그냥 여기서 Access Token 발급 후 Refresh Token 저장하고 리다이렉트
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
-        LibertyOAuth2User user = (LibertyOAuth2User) authentication.getPrincipal();
-        String refreshToken = JwtUtil.generateRefreshToken(user.getUser().getUserIdx(), user.getUser().getUsername(), user.getUser().getEmail(), user.getUser().getRole(), user.getUser().getNotBlocked());
-        user.getUser().setRefreshToken(refreshToken);
+        LibertyOAuth2User authUser = (LibertyOAuth2User) authentication.getPrincipal();
+        UserInfo user = userRepository.findByUsername(authUser.getName()).orElseThrow();
+        String refreshToken = JwtUtil.generateRefreshToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
+        user.setRefreshToken(refreshToken);
         // make 'AccessTOKEN' Cookie and give it to client
-        String token = JwtUtil.generateToken(user.getUser().getUserIdx(), user.getUser().getUsername(), user.getUser().getEmail(), user.getUser().getRole(), user.getUser().getNotBlocked());
-        user.getUser().setPassword(token); // 액세스 토큰 저장
-        user.getUser().setExpiresAt(ZonedDateTime.now().plusMinutes(15L));
-        userRepository.save(user.getUser());
+        String token = JwtUtil.generateToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
+        userRepository.save(user);
         // 쿠키에 토큰 설정
         long exp = 15 * 60; // 15분
         ResponseCookie cookie = ResponseCookie
@@ -59,7 +58,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         ResponseCookie cookie2 = ResponseCookie
                 .from("RefreshTOKEN", token)
-                .path("/") // '/user'
+                .path("/user") // '/user'
                 .httpOnly(true)
                 .secure(true)
                 .maxAge( 86400L * 28L) // 14일
@@ -74,7 +73,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .maxAge(0) // 즉시 만료
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
-        logger.info("Successfully authenticated user: {}", user.getUser().getUsername());
+        logger.info("Successfully authenticated user: {}", user.getUsername());
         String redirectUrl = request.getRequestURI();
         if (redirectUrl != null && !redirectUrl.isEmpty()) {
             redirectUrl = URLDecoder.decode(redirectUrl, StandardCharsets.UTF_8);
