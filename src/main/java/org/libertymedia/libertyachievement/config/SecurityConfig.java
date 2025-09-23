@@ -61,8 +61,9 @@ public class SecurityConfig {
                 ).failureHandler(authFailHandler)
         ).exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
-                logger.info("failed to Authenticate");
+                logger.info("failed to Authenticate: " + e.getMessage());
                 // JWT 없거나 실패 -> OAuth2 로그인 시작
+                res.sendRedirect("/login?error");
             })
         );;
 

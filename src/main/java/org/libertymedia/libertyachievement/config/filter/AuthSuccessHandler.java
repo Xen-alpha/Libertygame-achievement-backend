@@ -59,7 +59,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         ResponseCookie cookie2 = ResponseCookie
                 .from("RefreshTOKEN", token)
-                .path("/user") // '/user'
+                .path("/") // '/user'
                 .httpOnly(true)
                 .secure(true)
                 .maxAge( 86400L * 28L) // 14일

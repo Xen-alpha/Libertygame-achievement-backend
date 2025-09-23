@@ -31,11 +31,8 @@ public class LibertyOAuth2User implements OAuth2User {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_BASIC");
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_"+user.getRole());
         authorities.add(authority);
-        if (user.getRole().equals("ADVANCED")) {
-            authorities.add(new SimpleGrantedAuthority("ROLE_ADVANCED"));
-        }
         return authorities;
     }
 
