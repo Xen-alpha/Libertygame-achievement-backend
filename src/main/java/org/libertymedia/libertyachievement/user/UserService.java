@@ -97,15 +97,25 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public Cookie getNewToken(String userName) {
-        // roles는 DB/캐시에서 다시 조회하는 것이 안전
-        UserInfo userInfo = userRepository.findByUsername(userName).orElseThrow();
-        String access = JwtUtil.generateToken(userInfo.getUserIdx(), userInfo.getUsername(), userInfo.getEmail(), userInfo.getRole(), userInfo.getNotBlocked());
-        Cookie result = new Cookie("AccessToken", access);
-        result.setHttpOnly(true);
-        result.setSecure(true);
-        result.setPath("/");
-        return result;
+    @Transactional
+    public String getNewToken(String refreshToken) {
+        UserInfo tokenInfo = JwtUtil.getUser(refreshToken);
+        String username = tokenInfo.getUsername();
+        //  DB/캐시에서 다시 조회하는 것이 안전
+        UserInfo userInfo = userRepository.findByUsername(username).orElseThrow();
+        if (!userInfo.getUsername().equals(username)) {
+            return null;
+        }
+        return JwtUtil.generateToken(userInfo.getUserIdx(), userInfo.getUsername(), userInfo.getEmail(), userInfo.getRole(), userInfo.getNotBlocked());
+    }
+
+    @Transactional
+    public void deleteRefreshToken(String userName) {
+        UserInfo userInfo = userRepository.findByUsername(userName).orElse(null);
+        if (userInfo != null) {
+            userInfo.setRefreshToken(null);
+            userRepository.save(userInfo);
+        }
     }
 
 

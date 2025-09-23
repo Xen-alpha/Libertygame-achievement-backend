@@ -1,5 +1,6 @@
 package org.libertymedia.libertyachievement.config.filter;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -38,22 +39,23 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
                 }
             }
         }
-        try {
-            if (authToken == null) {
-                response.sendRedirect("/api/login");
+
+        if (authToken == null) {
+            return null;
+        } else {
+            userInfo = JwtUtil.getUser(authToken);
+            if (userInfo == null) {
                 return null;
-            } else {
-                userInfo = JwtUtil.getUser(authToken);
-                if (userInfo == null) {
-                    response.sendRedirect("/api/login");
-                    return null;
-                }
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userInfo, authToken, Objects.requireNonNull(userInfo).getAuthorities());
-                token.setAuthenticated(true);
-                return authenticationManager.authenticate(token);
             }
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Authentication failed");
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userInfo.getUsername(), null, Objects.requireNonNull(userInfo).getAuthorities());
+            token.setAuthenticated(true);
+            return authenticationManager.authenticate(token);
         }
+    }
+
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.sendRedirect("/");
     }
 }

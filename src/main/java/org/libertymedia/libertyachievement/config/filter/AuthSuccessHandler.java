@@ -35,35 +35,27 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
     private final UserRepository userRepository;
 
-
-    // OAuth2가 성공했을 때의 행동: OAuth2 과정 도중 아직 도전과제 사용하지 않은 사용자면 DB에 UserInfo 정보가 생성되므로 그냥 여기서 Access Token 발급 후 Refresh Token 저장하고 리다이렉트
+    // OAuth2가 성공했을 때의 행동: OAuth2 과정 도중 아직 도전과제 사용하지 않은 사용자면 서비스의 loadUser 과정에서 DB에 UserInfo 정보가 생성되므로 그냥 여기서 Refresh Token 저장하고 원래 사이트로 리다이렉트
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         LibertyOAuth2User authUser = (LibertyOAuth2User) authentication.getPrincipal();
         UserInfo user = userRepository.findByUsername(authUser.getName()).orElseThrow();
         String refreshToken = JwtUtil.generateRefreshToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
         user.setRefreshToken(refreshToken);
+        userRepository.save(user);
         // make 'AccessTOKEN' Cookie and give it to client
         String token = JwtUtil.generateToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
-        userRepository.save(user);
+        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         // 쿠키에 토큰 설정
-        long exp = 15 * 60; // 15분
-        ResponseCookie cookie = ResponseCookie
-                .from("AccessTOKEN", token)
-                .path("/")
-                .httpOnly(true)
-                .secure(true)
-                .maxAge(exp)
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         ResponseCookie cookie2 = ResponseCookie
                 .from("RefreshTOKEN", token)
-                .path("/user") // '/user'
+                .path("/") // '/user'
                 .httpOnly(true)
                 .secure(true)
+                .sameSite("Lax")
                 .maxAge( 86400L * 28L) // 14일
                 .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie2.toString());
         // JSESSIONID 제거
         ResponseCookie jsessionIdCookie = ResponseCookie
                 .from("JSESSIONID", "")
@@ -75,6 +67,6 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", user.getUsername());
 
-        response.sendRedirect("/");
+        response.sendRedirect("/user");
     }
 }
