@@ -52,12 +52,12 @@ public class SecurityConfig {
                         .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("BASIC")
                         .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("ADVANCED")
                         .anyRequest().permitAll()
-        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
         ).oauth2Login(oauth2 -> oauth2
                 .loginPage("/login")
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
+        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
         ).exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
                 logger.info("failed to Authenticate: " + e.getMessage());
