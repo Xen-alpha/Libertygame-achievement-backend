@@ -1,10 +1,12 @@
 package org.libertymedia.libertyachievement.user;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.user.model.request.PromotionRequest;
+import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,16 +23,14 @@ public class UserController {
         return ResponseEntity.ok(user.getUsername());
     }
 
-    @Operation(description="로그인 리다이렉션")
-    @PostMapping
-    public ResponseEntity<String> loginSuccess(@AuthenticationPrincipal UserInfo user) {
-        return ResponseEntity.ok("도전과제 서버 로그인 완료");
-    }
-
-    @Operation(description="로그인 리다이렉션")
-    @GetMapping
-    public ResponseEntity<String> loginSuccessGet(@AuthenticationPrincipal UserInfo user) {
-        return ResponseEntity.ok("도전과제 서버 로그인 완료");
+    @Operation(description="리프레시 토큰으로 재발급")
+    @PostMapping("/refresh")
+    public ResponseEntity<Void> refresh(@CookieValue("RefreshTOKEN") String refresh, HttpServletResponse response) {
+        UserInfo userInfo = JwtUtil.getUser(refresh); // 유효성 검사 + 블랙리스트/DB 확인(선택)
+        String username = userInfo.getUsername();
+        Cookie c = userService.getNewToken(username);
+        response.addCookie(c);
+        return ResponseEntity.noContent().build();
     }
     
     @Operation(description="로그아웃 리다이렉션")

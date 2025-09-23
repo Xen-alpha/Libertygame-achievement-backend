@@ -29,9 +29,6 @@ import java.time.ZonedDateTime;
 @RequiredArgsConstructor
 public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    @Value("${jwt.expired}")
-    private int exp;
-
     @Value("${HOST_DOMAIN}")
     private String host;
 
@@ -45,18 +42,27 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         LibertyOAuth2User user = (LibertyOAuth2User) authentication.getPrincipal();
         String refreshToken = JwtUtil.generateRefreshToken(user.getUser().getUserIdx(), user.getUser().getUsername(), user.getUser().getEmail(), user.getUser().getRole(), user.getUser().getNotBlocked());
         user.getUser().setRefreshToken(refreshToken);
-        // make 'ATOKEN' Cookie and give it to client
+        // make 'AccessTOKEN' Cookie and give it to client
         String token = JwtUtil.generateToken(user.getUser().getUserIdx(), user.getUser().getUsername(), user.getUser().getEmail(), user.getUser().getRole(), user.getUser().getNotBlocked());
         user.getUser().setPassword(token); // 액세스 토큰 저장
-        user.getUser().setExpiresAt(ZonedDateTime.now().plusHours(12L));
+        user.getUser().setExpiresAt(ZonedDateTime.now().plusMinutes(15L));
         userRepository.save(user.getUser());
         // 쿠키에 토큰 설정
+        long exp = 15 * 60; // 15분
         ResponseCookie cookie = ResponseCookie
                 .from("AccessTOKEN", token)
-                .path("/api")
+                .path("/")
                 .httpOnly(true)
                 .secure(true)
                 .maxAge(exp)
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        ResponseCookie cookie2 = ResponseCookie
+                .from("RefreshTOKEN", token)
+                .path("/user") // '/user'
+                .httpOnly(true)
+                .secure(true)
+                .maxAge( 86400L * 28L) // 14일
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         // JSESSIONID 제거
@@ -71,12 +77,8 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         logger.info("Successfully authenticated user: {}", user.getUser().getUsername());
         String redirectUrl = request.getRequestURI();
         if (redirectUrl != null && !redirectUrl.isEmpty()) {
-            try {
-                redirectUrl = URLDecoder.decode(redirectUrl, StandardCharsets.UTF_8);
-                logger.info("Redirecting to original URL: {}", redirectUrl);
-            } catch (Exception e) {
-                logger.error("Failed to decode state parameter: {}", redirectUrl, e);
-            }
+            redirectUrl = URLDecoder.decode(redirectUrl, StandardCharsets.UTF_8);
+            logger.info("Redirecting to original URL: {}", redirectUrl);
         } else {
             redirectUrl = host;
             logger.warn("No state parameter found, using default redirect: {}", redirectUrl);

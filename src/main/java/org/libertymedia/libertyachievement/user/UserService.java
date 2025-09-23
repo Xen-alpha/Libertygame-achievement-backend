@@ -2,10 +2,12 @@ package org.libertymedia.libertyachievement.user;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.user.model.Promotion;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.user.model.request.PromotionRequest;
+import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -95,6 +97,18 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    public Cookie getNewToken(String userName) {
+        // roles는 DB/캐시에서 다시 조회하는 것이 안전
+        UserInfo userInfo = userRepository.findByUsername(userName).orElseThrow();
+        String access = JwtUtil.generateToken(userInfo.getUserIdx(), userInfo.getUsername(), userInfo.getEmail(), userInfo.getRole(), userInfo.getNotBlocked());
+        Cookie result = new Cookie("AccessToken", access);
+        result.setHttpOnly(true);
+        result.setSecure(true);
+        result.setPath("/");
+        return result;
+    }
+
+
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -108,12 +122,4 @@ public class UserService implements UserDetailsService {
 
         return null;
     }
-
-    /*
-    // 6시간마다 만료된 승급 요청을 제거합니다
-    @Scheduled(fixedRate = 21600000)
-    private void deleteExpiredPromotionRequest() {
-
-    }
-    */
 }
