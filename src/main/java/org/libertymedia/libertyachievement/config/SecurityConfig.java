@@ -53,7 +53,6 @@ public class SecurityConfig {
                         .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("ADVANCED")
                         .anyRequest().permitAll()
         ).oauth2Login(oauth2 -> oauth2
-                .loginPage("/oauth2/login")
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
@@ -62,7 +61,7 @@ public class SecurityConfig {
             .authenticationEntryPoint( (req, res, e) -> {
                 logger.info("failed to Authenticate: " + e.getMessage());
                 // JWT 없거나 실패 -> OAuth2 로그인 시작
-                res.sendRedirect("/oauth2/login?error");
+                res.sendRedirect("/api/login");
             })
         );;
 

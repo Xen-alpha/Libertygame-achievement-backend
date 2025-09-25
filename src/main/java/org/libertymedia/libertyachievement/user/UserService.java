@@ -78,10 +78,10 @@ public class UserService implements UserDetailsService {
         String contents = """
             리버티게임 도전과제 생성을 요청하셨습니다.\n\n
             OAuth2 연동 로그인이 되어 있는지 확인 후 승급을 하려면 아래 링크를 누르세요.\n
-            https://dev.libertgame.work:8080/user/promote/accepted/"""+ user.getUserIdx().toString() +"""
+            https://dev.libertgame.work:8080/user/promote/accepted/"""+ user.getUserIdx() +"""
             \n\n
             만일 승급을 취소하려면 아래 링크를 누르세요\n
-            https://dev.libertgame.work:8080/user/promote/declined/"""+ user.getUserIdx().toString() +"""
+            https://dev.libertgame.work:8080/user/promote/declined/"""+ user.getUserIdx() +"""
             \n리버티게임을 이용해주셔서 감사합니다.
             """;
         // 메일 보내기

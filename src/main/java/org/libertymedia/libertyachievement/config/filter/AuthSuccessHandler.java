@@ -53,7 +53,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .httpOnly(true)
                 .secure(true)
                 .sameSite("Lax")
-                .maxAge( 86400L * 28L) // 14일
+                .maxAge( 86400L * 180L) // 180일
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie2.toString());
         // JSESSIONID 제거
@@ -67,6 +67,6 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", user.getUsername());
 
-        response.sendRedirect("/user");
+        response.sendRedirect("/api/user");
     }
 }

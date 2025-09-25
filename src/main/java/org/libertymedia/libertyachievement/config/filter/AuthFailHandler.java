@@ -23,5 +23,6 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.getWriter().write("{\"error\": \"OAuth2 login failed: " + exception.getMessage() + "\"}");
+        response.sendRedirect("/");
     }
 }
