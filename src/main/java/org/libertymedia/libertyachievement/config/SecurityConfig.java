@@ -50,9 +50,9 @@ public class SecurityConfig {
         http.formLogin(AbstractHttpConfigurer::disable
         ).authorizeHttpRequests(
                 (auth) -> auth
-                        .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/login/*", "/logout", "/", "/swagger-ui/index.html", "/user/logout", "/v3/**", "/user/issue").permitAll()
-                        .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("BASIC")
-                        .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("ADVANCED")
+                        .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/login/*", "/logout", "/", "/swagger-ui/index.html", "/user/logout", "/v3/**", "/user", "/user/issue").permitAll()
+                        .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
+                        .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("ADVANCED")
                         .anyRequest().authenticated()
         ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
         ).oauth2Login(oauth2 -> oauth2
@@ -63,7 +63,6 @@ public class SecurityConfig {
             .authenticationEntryPoint( (req, res, e) -> {
                 logger.info("failed to Authenticate: " + e.getMessage());
                 // JWT 없거나 실패 -> OAuth2 로그인 시작
-                res.sendRedirect("/api/login");
             })
         );
 
