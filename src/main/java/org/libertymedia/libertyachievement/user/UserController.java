@@ -30,8 +30,8 @@ public class UserController {
     public ResponseEntity<TokenResponse> refresh(@CookieValue("RefreshTOKEN") String refresh) {
         UserInfo userInfo = JwtUtil.getUser(refresh); // 유효성 검사 + 블랙리스트/DB 확인(선택)
         String value = userService.getNewToken(refresh);
-        if (value == null) return ResponseEntity.badRequest().body(new TokenResponse(""));
-        return ResponseEntity.ok(new TokenResponse(value));
+        if (value == null) return ResponseEntity.badRequest().body(new TokenResponse("Failed"));
+        return ResponseEntity.ok().header("Authorization", value).body(new TokenResponse("Success"));
     }
     
     @Operation(description="로그아웃 리다이렉션")

@@ -49,7 +49,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 log.info("failed to parse token");
             }
         } else {
-            log.info("no token, access to anonymous user");
+            log.info("no token");
         }
 
         filterChain.doFilter(request, response);

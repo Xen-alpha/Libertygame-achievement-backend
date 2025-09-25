@@ -41,29 +41,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
 
+
         http.csrf(AbstractHttpConfigurer::disable
-        ).headers(header -> header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
+        ).httpBasic(AbstractHttpConfigurer::disable
         ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
-        ).formLogin(AbstractHttpConfigurer::disable
-        ).logout( logout -> logout.deleteCookies("JSESSIONID", "RefreshTOKEN").clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/user/logout").permitAll()
+        );
+
+        http.formLogin(AbstractHttpConfigurer::disable
         ).authorizeHttpRequests(
                 (auth) -> auth
                         .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/login/*", "/logout", "/", "/swagger-ui/index.html", "/user/logout", "/v3/**", "/user/issue").permitAll()
                         .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("BASIC")
                         .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**", "/user", "/user/**").hasRole("ADVANCED")
-                        .anyRequest().permitAll()
+                        .anyRequest().authenticated()
+        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
         ).oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
-        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
         ).exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
                 logger.info("failed to Authenticate: " + e.getMessage());
                 // JWT 없거나 실패 -> OAuth2 로그인 시작
                 res.sendRedirect("/api/login");
             })
-        );;
+        );
 
         return http.build();
     }
@@ -75,7 +77,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "http://dev.libertygame.work", "https://libertygame.work", "http://libertygame.work", "https://libertyga.me", "http://libertyga.me", "http://localhost"));
+        corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "https://libertygame.work", "https://libertyga.me", "http://localhost"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowCredentials(true);
         corsConfig.setAllowedHeaders(List.of("*"));
