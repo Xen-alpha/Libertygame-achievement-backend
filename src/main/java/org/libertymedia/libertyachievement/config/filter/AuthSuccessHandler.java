@@ -67,6 +67,6 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", user.getUsername());
 
-        response.sendRedirect("/api/user");
+        response.sendRedirect("/user");
     }
 }
