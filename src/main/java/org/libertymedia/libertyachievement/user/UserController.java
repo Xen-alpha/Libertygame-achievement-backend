@@ -29,6 +29,7 @@ public class UserController {
     @PostMapping("/issue")
     public ResponseEntity<TokenResponse> refresh(@CookieValue("RefreshTOKEN") String refresh) {
         UserInfo userInfo = JwtUtil.getUser(refresh); // 유효성 검사 + 블랙리스트/DB 확인(선택)
+        if (userInfo == null) return ResponseEntity.badRequest().body(new TokenResponse("Failed"));
         String value = userService.getNewToken(refresh);
         if (value == null) return ResponseEntity.badRequest().body(new TokenResponse("Failed"));
         return ResponseEntity.ok().header("Authorization", value).body(new TokenResponse("Success"));
