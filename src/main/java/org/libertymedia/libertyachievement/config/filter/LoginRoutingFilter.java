@@ -43,6 +43,7 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.sendRedirect("/");
     }
 
     private String getBearerToken(HttpServletRequest request) {
