@@ -29,9 +29,6 @@ import java.time.ZonedDateTime;
 @RequiredArgsConstructor
 public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-    @Value("${HOST_DOMAIN}")
-    private String host;
-
     private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
     private final UserRepository userRepository;
 
@@ -52,7 +49,6 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .path("/") // '/user'
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Lax")
                 .maxAge( 86400L * 180L) // 180일
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie2.toString());
@@ -67,6 +63,5 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", user.getUsername());
 
-        response.sendRedirect("/user");
     }
 }

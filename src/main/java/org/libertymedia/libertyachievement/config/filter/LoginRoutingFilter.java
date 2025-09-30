@@ -18,32 +18,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.io.IOException;
 import java.util.Objects;
 
-@Deprecated
 @RequiredArgsConstructor
 public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
-    private final AuthenticationManager authenticationManager;
     private final Logger logger = LoggerFactory.getLogger(LoginRoutingFilter.class);
 
+    private final AuthenticationManager authenticationManager;
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        logger.info("누군가 로그인을 시도함");
-        // Cookie를 먼저 찾는다.
-        Cookie[] cookies = request.getCookies();
-        String authToken = null;
-        UserInfo userInfo = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("AccessToken")) {
-                    authToken = cookie.getValue();
-                    break;
-                }
-            }
-        }
-
+        logger.info("UsernamePasswordAuth Filter 작동");
+        String authToken = getBearerToken(request);
         if (authToken == null) {
             return null;
         } else {
-            userInfo = JwtUtil.getUser(authToken);
+            UserInfo userInfo = JwtUtil.getUser(authToken);
             if (userInfo == null) {
                 return null;
             }
@@ -56,6 +43,14 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        response.sendRedirect("/");
+    }
+
+    private String getBearerToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        } else {
+            return null;
+        }
     }
 }

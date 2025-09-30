@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.config.filter.AuthFailHandler;
 import org.libertymedia.libertyachievement.config.filter.AuthSuccessHandler;
 import org.libertymedia.libertyachievement.config.filter.JWTFilter;
+import org.libertymedia.libertyachievement.config.filter.LoginRoutingFilter;
 import org.libertymedia.libertyachievement.user.LibertyOAuth2UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -51,12 +52,12 @@ public class SecurityConfig {
         http.formLogin(AbstractHttpConfigurer::disable
         ).authorizeHttpRequests(
                 (auth) -> auth
-                        .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/login/*", "/logout", "/", "/swagger-ui/index.html", "/user/logout", "/v3/**", "/user", "/user/issue").permitAll()
+                        .requestMatchers("/achievement/v1/list/**", "/login", "/login/**", "/login/*", "/logout", "/", "/swagger-ui/index.html", "/user/logout", "/user", "/user/issue").permitAll()
                         .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
                         .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("ADVANCED")
                         .anyRequest().authenticated()
-
-        ).addFilterAfter(jwtFilter, LogoutFilter.class
+        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
+        ).addFilterAt(new LoginRoutingFilter(authenticationConfiguration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class
         ).oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
