@@ -1,6 +1,7 @@
 package org.libertymedia.libertyachievement.config.filter;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
         String refreshToken = JwtUtil.generateRefreshToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
-        // make 'AccessTOKEN' Cookie and give it to client
+        // make Authorization header and give it to client
         String token = JwtUtil.generateToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
         response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         // 쿠키에 토큰 설정
