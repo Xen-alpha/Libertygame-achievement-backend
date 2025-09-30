@@ -32,7 +32,7 @@ public class UserController {
         if (userInfo == null) return ResponseEntity.badRequest().body(new TokenResponse("Failed"));
         String value = userService.getNewToken(refresh);
         if (value == null) return ResponseEntity.badRequest().body(new TokenResponse("Failed"));
-        return ResponseEntity.ok().header("Authorization", value).body(new TokenResponse("Success"));
+        return ResponseEntity.ok().header("Authorization", value).body(new TokenResponse(value));
     }
     
     @Operation(description="로그아웃 리다이렉션")
