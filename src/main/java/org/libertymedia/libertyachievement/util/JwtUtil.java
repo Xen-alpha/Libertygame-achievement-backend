@@ -31,7 +31,6 @@ public class JwtUtil {
     @PostConstruct
     public void init() {
         SECRET = secret;
-
     }
 
     public static UserInfo getUser(String token) {
@@ -42,7 +41,7 @@ public class JwtUtil {
                 .getBody();
         return UserInfo.builder()
                 .userIdx(claims.get("userIdx", Long.class))
-                .username(claims.get("username", String.class))
+                .username(claims.get("userName", String.class))
                 .role(claims.get("role", String.class))
                 .notBlocked(claims.get("notBlocked", Boolean.class))
                 .email(claims.get("userEmail", String.class))

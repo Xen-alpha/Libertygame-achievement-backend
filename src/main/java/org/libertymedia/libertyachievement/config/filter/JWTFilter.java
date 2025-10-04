@@ -38,18 +38,24 @@ public class JWTFilter extends OncePerRequestFilter {
                     UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
                     identityToken.setDetails(user);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
+                    filterChain.doFilter(request, response);
                 } else {
                     log.info("no user exists / cookie is expired");
+                    response.sendRedirect("/login");
                 }
             } catch (JwtException e) {
                 // do nothing: continue to OAuth2
                 log.info("failed to parse token");
+                response.sendRedirect("/login");
             }
         } else {
             log.info("no token");
+            if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET")) {
+                filterChain.doFilter(request, response);
+            }
         }
 
-        filterChain.doFilter(request, response);
+
     }
 
     private String getBearerToken(HttpServletRequest request) {

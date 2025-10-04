@@ -25,6 +25,12 @@ public class UserController {
         return ResponseEntity.ok("등록 완료, 이제 도전과제 인증용 토큰을 받아올 수 있습니다.");
     }
 
+    @Operation(description="로그인 실패 리다이렉션")
+    @PostMapping("/failed")
+    public ResponseEntity<String> failedAuthentication() {
+        return ResponseEntity.ok("인증 실패로 리다이렉트");
+    }
+
     @Operation(description="리프레시 토큰으로 AccessToken 발급해서 리턴")
     @PostMapping("/issue")
     public ResponseEntity<TokenResponse> refresh(@CookieValue("RefreshTOKEN") String refresh) {

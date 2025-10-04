@@ -27,23 +27,17 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         logger.info("UsernamePasswordAuth Filter 작동");
         String authToken = getBearerToken(request);
-        if (authToken == null) {
-            return null;
-        } else {
-            UserInfo userInfo = JwtUtil.getUser(authToken);
-            if (userInfo == null) {
-                return null;
-            }
-            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userInfo.getUsername(), null, Objects.requireNonNull(userInfo).getAuthorities());
-            token.setAuthenticated(true);
-            return authenticationManager.authenticate(token);
-        }
+        UserInfo userInfo = JwtUtil.getUser(authToken);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userInfo.getUsername(), null, Objects.requireNonNull(userInfo).getAuthorities());
+        token.setAuthenticated(true);
+        return authenticationManager.authenticate(token);
+
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        response.sendRedirect("/");
+        response.sendRedirect("/user/failed");
     }
 
     private String getBearerToken(HttpServletRequest request) {
