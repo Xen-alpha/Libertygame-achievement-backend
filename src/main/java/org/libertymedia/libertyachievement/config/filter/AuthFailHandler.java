@@ -22,6 +22,6 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
         logger.debug("OAuth2 failure: ", exception);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        response.getWriter().write("{\"error\": \"OAuth2 login failed: " + exception.getMessage() + "\"}");
+        response.getWriter().write("{ \"error\": \"OAuth2 login failed: " + exception.getMessage() + "\" }");
     }
 }
