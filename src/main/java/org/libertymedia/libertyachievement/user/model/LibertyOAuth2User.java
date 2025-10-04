@@ -27,7 +27,6 @@ public class LibertyOAuth2User implements OAuth2User {
         return user.getUsername();
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();

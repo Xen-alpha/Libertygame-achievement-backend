@@ -15,7 +15,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.io.IOException;
 import java.util.Objects;
 
 @RequiredArgsConstructor
@@ -28,16 +27,8 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
         logger.info("UsernamePasswordAuth Filter 작동");
         String authToken = getBearerToken(request);
         UserInfo userInfo = JwtUtil.getUser(authToken);
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userInfo.getUsername(), null, Objects.requireNonNull(userInfo).getAuthorities());
-        token.setAuthenticated(true);
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userInfo, null, Objects.requireNonNull(userInfo).getAuthorities());
         return authenticationManager.authenticate(token);
-
-    }
-
-    @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        response.sendRedirect("/user/failed");
     }
 
     private String getBearerToken(HttpServletRequest request) {
