@@ -45,14 +45,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
 
-
         http.csrf(AbstractHttpConfigurer::disable
-        ).httpBasic(AbstractHttpConfigurer::disable
+        );
+        /*
+        http.httpBasic(AbstractHttpConfigurer::disable
         );
 
         http.formLogin(AbstractHttpConfigurer::disable
         );
-
+        */
         http.authorizeHttpRequests(
             (auth) -> auth
                     .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
@@ -71,7 +72,7 @@ public class SecurityConfig {
         );
         http.addFilterAt(new LoginRoutingFilter(authenticationConfiguration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class
         );
-        http.addFilterBefore(jwtFilter, LogoutFilter.class
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
         );
 
 
