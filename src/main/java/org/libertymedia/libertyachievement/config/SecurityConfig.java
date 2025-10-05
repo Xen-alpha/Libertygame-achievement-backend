@@ -28,6 +28,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,22 +48,34 @@ public class SecurityConfig {
 
         http.csrf(AbstractHttpConfigurer::disable
         ).httpBasic(AbstractHttpConfigurer::disable
-        ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
-        ).logout(logout -> logout.permitAll().clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/api/user/logout"));
+        );
 
         http.formLogin(AbstractHttpConfigurer::disable
-        ).authorizeHttpRequests(
-                (auth) -> auth
-                        .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
-                        .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("ADVANCED")
-                        .anyRequest().permitAll()
-        ).oauth2Login(oauth2 -> oauth2
+        );
+
+        http.authorizeHttpRequests(
+            (auth) -> auth
+                    .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
+                    .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("ADVANCED")
+                    .anyRequest().permitAll()
+        );
+
+        http.oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
-        ).addFilterAt(new LoginRoutingFilter(authenticationConfiguration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class
-        ).addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
-        ).exceptionHandling(ex -> ex
+        );
+
+        http.logout(logout -> logout.permitAll().clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/user/logout"));
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
+        );
+        http.addFilterAt(new LoginRoutingFilter(authenticationConfiguration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class
+        );
+        http.addFilterBefore(jwtFilter, LogoutFilter.class
+        );
+
+
+        http.exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
                 logger.info("failed to Authenticate: " + e.getMessage());
             })
@@ -77,7 +91,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "https://libertygame.work", "https://libertyga.me", "http://localhost"));
+        corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "http://dev.libertygame.work", "https://libertygame.work", "http://libertygame.work", "https://libertyga.me", "http://libertyga.me", "http://localhost"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowCredentials(true);
         corsConfig.setAllowedHeaders(List.of("*"));
