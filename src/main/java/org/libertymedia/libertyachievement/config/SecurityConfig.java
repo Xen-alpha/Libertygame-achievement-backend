@@ -18,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -46,35 +47,26 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
 
         http.csrf(AbstractHttpConfigurer::disable
-        );
-        /*
-        http.httpBasic(AbstractHttpConfigurer::disable
+        ).httpBasic(AbstractHttpConfigurer::disable
+        ).formLogin(AbstractHttpConfigurer::disable
         );
 
-        http.formLogin(AbstractHttpConfigurer::disable
-        );
-        */
-        http.authorizeHttpRequests(
+        http.authorizeHttpRequests( // TODO: REDO request authorization
             (auth) -> auth
                     .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
                     .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("ADVANCED")
                     .anyRequest().permitAll()
         );
-
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class);
         http.oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 ).failureHandler(authFailHandler)
         );
-
         http.logout(logout -> logout.permitAll().clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/user/logout"));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
         );
-        http.addFilterAt(new LoginRoutingFilter(authenticationConfiguration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class
-        );
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class
-        );
-
 
         http.exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
