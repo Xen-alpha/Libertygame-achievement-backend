@@ -1,7 +1,7 @@
 FROM openjdk:17-ea-slim-buster
 LABEL authors="Xenα"
 
-ADD ./build/libs/libertygame-achievement-0.5.2.jar /app.jar
+ADD ./build/libs/libertygame-achievement-0.6.0.jar /app.jar
 EXPOSE 8000
 
 ENV HOST_DOMAIN="dev.libertygame.work"
@@ -13,10 +13,10 @@ ENV MAIL_PASS=""
 ENV OAUTH_CLIENT_ID=""
 ENV OAUTH_CLIENT_NAME=""
 ENV JWT_SECRET=""
-ENV JWT_EXPIRED=43200000
+ENV JWT_EXPIRED=15552000000
 ENV KEYSTORE_PASS=""
 ENV MARIADB_DBNAME=""
 
-CMD ["java", "-jar", "/app.jar", "-Xms512m", "-Xmx2048m", "-Dfile.encoding=UTF-8", "-Dconsole.encoding=UTF-8", "-DHOST_DOMAIN=$HOST_DOMAIN", "-DHOST_OAUTH=$HOST_OAUTH", "-DWALLET_PATH=$WALLET_PATH", \
+CMD ["java", "-jar", "/app.jar", "-Xms512m", "-Xmx4096m", "-Dfile.encoding=UTF-8", "-Dconsole.encoding=UTF-8", "-DHOST_DOMAIN=$HOST_DOMAIN", "-DHOST_OAUTH=$HOST_OAUTH", "-DWALLET_PATH=$WALLET_PATH", \
     "-DORACLE_USERNAME=$ORACLE_USERNAME", "-DORACLE_PASSWORD=$ORACLE_PASSWORD", "-DMAIL_ADDR=$MAIL_ADDR", "-DMAIL_PASS=$MAIL_PASS", "-DOAUTH_CLIENT_ID=$OAUTH_CLIENT_ID", \
     "-DOAUTH_CLIENT_NAME=$OAUTH_CLIENT_NAME", "-DKEYSTORE_PASS=$KEYSTORE_PASS", "-DMARIADB_DBNAME=$MARIADB_DBNAME", "-DJWT_SECRET=$JWT_SECRET", "-DJWT_EXPIRED=$JWT_EXPIRED" ]

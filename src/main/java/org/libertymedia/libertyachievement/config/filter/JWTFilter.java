@@ -29,7 +29,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = getBearerToken(request);
+        Cookie[] cookies = request.getCookies();
+        String token = null;
+        for (Cookie cookie : cookies) {
+            String cookieName = cookie.getName();
+            if (cookieName.equals("AccessTOKEN")) {
+                token = cookie.getValue();
+                break;
+            }
+        }
+
         // Get user info and make authentication class
         if (token != null) {
             try {
@@ -37,27 +46,21 @@ public class JWTFilter extends OncePerRequestFilter {
                 if (user != null) {
                     UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole())));
                     identityToken.setDetails(user);
+                    identityToken.setAuthenticated(true);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
-                    filterChain.doFilter(request, response);
-                } else {
-                    log.info("no user exists / cookie is expired");
-                    response.sendRedirect("/login");
                 }
             } catch (JwtException e) {
                 // do nothing: continue to OAuth2
                 log.info("failed to parse token");
-                response.sendRedirect("/login");
             }
         } else {
             log.info("no token");
-            if (request.getMethod().equals("OPTIONS") || request.getMethod().equals("GET")) {
-                filterChain.doFilter(request, response);
-            }
         }
 
-
+        filterChain.doFilter(request, response);
     }
 
+    @Deprecated
     private String getBearerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {

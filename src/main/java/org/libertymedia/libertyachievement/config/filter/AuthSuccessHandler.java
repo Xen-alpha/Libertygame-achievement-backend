@@ -35,16 +35,12 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         LibertyOAuth2User authUser = (LibertyOAuth2User) authentication.getPrincipal();
         UserInfo user = userRepository.findByUsername(authUser.getName()).orElseThrow();
-        String refreshToken = JwtUtil.generateRefreshToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
-        user.setRefreshToken(refreshToken);
-        userRepository.save(user);
-        // make Authorization header and give it to client
+        // make access token and give it to client
         String token = JwtUtil.generateToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
-        response.addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token);
         // 쿠키에 토큰 설정
         ResponseCookie cookie2 = ResponseCookie
-                .from("RefreshTOKEN", token)
-                .path("/") // '/user'
+                .from("AccessTOKEN", token)
+                .path("/") //
                 .httpOnly(true)
                 .secure(true)
                 .maxAge( 86400L * 180L) // 180일
