@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
+@Deprecated
 @Component
 @RequiredArgsConstructor
 public class AuthFailHandler implements AuthenticationFailureHandler {

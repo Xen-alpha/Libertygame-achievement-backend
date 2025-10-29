@@ -62,18 +62,19 @@ public class SecurityConfig {
         http.oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
-                ).failureHandler(authFailHandler)
+                )
         );
         http.logout(logout -> logout.permitAll().clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/user/logout"));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
         );
-
+        /*
         http.exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
                 logger.info("failed to Authenticate: " + e.getMessage());
+
             })
         );
-
+        */
         return http.build();
     }
     @Bean
@@ -87,7 +88,6 @@ public class SecurityConfig {
         corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "http://dev.libertygame.work", "https://libertygame.work", "http://libertygame.work", "https://libertyga.me", "http://libertyga.me", "http://localhost"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowCredentials(true);
-        corsConfig.setAllowedHeaders(List.of("*"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
