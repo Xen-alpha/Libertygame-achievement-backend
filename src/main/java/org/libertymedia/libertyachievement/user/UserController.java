@@ -20,7 +20,7 @@ public class UserController {
     private final UserService userService;
 
     @Operation(description="일반 리다이렉션")
-    @PostMapping
+    @PostMapping // TODO: POST인지 GET인지 확인하여 수정
     public ResponseEntity<String> enableAchievement() {
         return ResponseEntity.ok("등록 완료.");
     }

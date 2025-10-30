@@ -47,7 +47,6 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
 
         http.csrf(AbstractHttpConfigurer::disable
-        ).httpBasic(AbstractHttpConfigurer::disable
         ).formLogin(AbstractHttpConfigurer::disable
         );
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림

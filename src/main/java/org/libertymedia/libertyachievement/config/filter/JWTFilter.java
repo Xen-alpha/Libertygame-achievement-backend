@@ -31,11 +31,13 @@ public class JWTFilter extends OncePerRequestFilter {
     @Value("${OAUTH_CLIENT_ID}")
     private String value;
 
+    @Value("spring.security.oauth2.client.registration.libertygame.redirect-uri")
+    private String redirectUri;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getRequestURI().equals("/login")) {
-            response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value);
-            return;
+            response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value+"&redirect_uri="+redirectUri);
         }
         Cookie[] cookies = request.getCookies();
         String token = null;

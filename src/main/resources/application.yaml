@@ -62,6 +62,4 @@ jwt:
   secret: ${JWT_SECRET}
   expired: ${JWT_EXPIRED}
 
-mariadbname: ${MARIADB_DBNAME}
-
 
