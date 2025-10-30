@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import java.util.Objects;
 
+@Deprecated
 @RequiredArgsConstructor
 public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
     private final Logger logger = LoggerFactory.getLogger(LoginRoutingFilter.class);

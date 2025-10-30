@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.user.model.request.CommonRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,10 +28,13 @@ import java.util.List;
 @Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 
+    @Value("${OAUTH_CLIENT_ID}")
+    private String value;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getRequestURI().equals("/login")) {
-            response.sendRedirect("/api/oauth2/authorize/libertygame");
+            response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value);
             return;
         }
         Cookie[] cookies = request.getCookies();

@@ -30,7 +30,7 @@ public class UserController {
     public ResponseEntity<String> failedAuthentication() {
         return ResponseEntity.ok("인증 실패로 리다이렉트");
     }
-
+    /*
     @Deprecated
     @Operation(description="리프레시 토큰으로 AccessToken 발급해서 리턴")
     @PostMapping("/issue")
@@ -41,17 +41,10 @@ public class UserController {
         if (value == null) return ResponseEntity.badRequest().body(new TokenResponse("Failed"));
         return ResponseEntity.ok().header("Authorization", value).body(new TokenResponse(value));
     }
-    
+    */
     @Operation(description="로그아웃 리다이렉션")
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        for (Cookie c : cookies) {
-            if (c.getName().equals("libertyUserName")) {
-                userService.deleteRefreshToken(c.getValue());
-                break;
-            }
-        }
         return ResponseEntity.ok("도전과제 서버 로그아웃 완료");
     }
 
