@@ -30,7 +30,7 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getRequestURI().equals("/login")) {
-            response.sendRedirect("/oauth2/authorize/libertygame");
+            response.sendRedirect("/api/oauth2/authorize/libertygame");
             return;
         }
         Cookie[] cookies = request.getCookies();
