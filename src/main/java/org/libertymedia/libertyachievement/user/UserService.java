@@ -123,7 +123,6 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<UserInfo> result = userRepository.findByUsername(username);
-
         if (result.isPresent()) {
             // 7번 로직
             UserInfo user = result.get();

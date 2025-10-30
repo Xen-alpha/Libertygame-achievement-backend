@@ -50,7 +50,7 @@ spring:
             client-secret: ${OAUTH_CLIENT_SECRET}
             redirect-uri: ${HOST_DOMAIN}/login/oauth2/code/libertygame
             authorization-grant-type: authorization_code
-            client-authentication-method: client_secret_basic
+            client-authentication-method: client_secret_post
             provider: libertygame
         provider:
           libertygame:
@@ -61,7 +61,5 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   expired: ${JWT_EXPIRED}
-
-mariadbname: ${MARIADB_DBNAME}
 
 

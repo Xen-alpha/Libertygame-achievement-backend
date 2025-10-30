@@ -47,34 +47,31 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
 
         http.csrf(AbstractHttpConfigurer::disable
-        ).httpBasic(AbstractHttpConfigurer::disable
         ).formLogin(AbstractHttpConfigurer::disable
         );
-
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
+        );
         http.authorizeHttpRequests( // TODO: REDO request authorization
             (auth) -> auth
                     .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
                     .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("ADVANCED")
                     .anyRequest().permitAll()
         );
+        http.logout(logout -> logout.permitAll().clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/api/user/logout"));
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        http.addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class);
         http.oauth2Login(oauth2 -> oauth2
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).permitAll().successHandler(authSuccessHandler
                 )
         );
-        http.logout(logout -> logout.permitAll().clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/api/user/logout"));
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
-        );
-        /*
+
         http.exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
                 logger.info("failed to Authenticate: " + e.getMessage());
-
+                res.sendRedirect("/api/user/failed");
             })
         );
-        */
+
         return http.build();
     }
     @Bean
@@ -85,7 +82,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "http://dev.libertygame.work", "https://libertygame.work", "http://libertygame.work", "https://libertyga.me", "http://libertyga.me", "http://localhost"));
+        corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "https://libertygame.work", "https://libertyga.me", "http://localhost"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowCredentials(true);
 

@@ -30,7 +30,7 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
     private final UserRepository userRepository;
 
-    // OAuth2가 성공했을 때의 행동: OAuth2 과정 도중 아직 도전과제 사용하지 않은 사용자면 서비스의 loadUser 과정에서 DB에 UserInfo 정보가 생성되므로 그냥 여기서 Refresh Token 저장하고 원래 사이트로 리다이렉트
+    // OAuth2가 성공했을 때의 행동: OAuth2 과정 도중 아직 도전과제 사용하지 않은 사용자면 서비스의 loadUser 과정에서 DB에 UserInfo 정보가 생성되므로 컨트롤러에 정의된 API로 리다이렉트
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         LibertyOAuth2User authUser = (LibertyOAuth2User) authentication.getPrincipal();
@@ -56,6 +56,6 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", user.getUsername());
-
+        response.sendRedirect("/api/user");
     }
 }
