@@ -38,10 +38,14 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if (request.getRequestURI().equals("/login")) {
             response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+redirectUri);
-            filterChain.doFilter(request, response);
+            doFilter(request, response, filterChain);
             return;
         }
         Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            doFilter(request, response, filterChain);
+            return;
+        }
         String token = null;
         for (Cookie cookie : cookies) {
             String cookieName = cookie.getName();
@@ -71,6 +75,8 @@ public class JWTFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+
 
     @Deprecated
     private String getBearerToken(HttpServletRequest request) {
