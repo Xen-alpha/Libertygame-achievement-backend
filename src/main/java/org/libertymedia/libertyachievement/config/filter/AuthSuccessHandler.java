@@ -75,12 +75,6 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
             log.warn("No state parameter found, using default redirect: {}", redirectUrl);
         }
 
-        // 세션 무효화 (추가 안전 조치)
-        if (request.getSession(false) != null) {
-            request.getSession().invalidate();
-            log.info("Invalidated existing session");
-        }
-
         response.sendRedirect(redirectUrl);
     }
 }

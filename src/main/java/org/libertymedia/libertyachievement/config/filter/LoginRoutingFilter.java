@@ -57,6 +57,7 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain, Authentication auth) throws IOException, ServletException {
         UserInfo userInfo = (UserInfo) auth.getPrincipal();
         String jwt = JwtUtil.generateToken(userInfo.getUserIdx(), userInfo.getUsername(), userInfo.getEmail(), userInfo.getRole(), userInfo.getNotBlocked());
+        logger.info("Success in UsernamePasswordFilter Auth.");
         ResponseCookie cookie = ResponseCookie.from("ATOKEN", jwt)
                 .path("/")
                 .httpOnly(true)

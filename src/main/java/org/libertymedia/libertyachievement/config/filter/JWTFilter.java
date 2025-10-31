@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
-import org.libertymedia.libertyachievement.user.model.request.CommonRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -36,13 +35,16 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().equals("/login")) {
+        if (request.getRequestURI().equals("/login") && SecurityContextHolder.getContext().getAuthentication() == null) {
             response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+redirectUri);
+            log.info("calling doFilter...");
             doFilter(request, response, filterChain);
+            log.info("doFilter done");
             return;
         }
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
+            log.info("No cookies!");
             doFilter(request, response, filterChain);
             return;
         }
@@ -64,6 +66,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     identityToken.setDetails(user);
                     identityToken.setAuthenticated(true);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
+                    log.info("pass jwt filter");
                 }
             } catch (JwtException e) {
                 // do nothing: continue to OAuth2
