@@ -1,6 +1,9 @@
 package org.libertymedia.libertyachievement.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.libertymedia.libertyachievement.common.BaseResponse;
 import org.libertymedia.libertyachievement.config.filter.AuthFailHandler;
 import org.libertymedia.libertyachievement.config.filter.AuthSuccessHandler;
 import org.libertymedia.libertyachievement.config.filter.JWTFilter;
@@ -39,36 +42,43 @@ public class SecurityConfig {
     private final LibertyOAuth2UserService userService;
     private final JWTFilter jwtFilter;
     private final AuthSuccessHandler authSuccessHandler;
-    private final AuthFailHandler authFailHandler;
+    // private final AuthFailHandler authFailHandler;
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception { // 세션 방식 로그인
-
-        http.csrf(AbstractHttpConfigurer::disable
-        ).formLogin(AbstractHttpConfigurer::disable
-        );
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
-        );
-        http.authorizeHttpRequests( // TODO: REDO request authorization
+        http.oauth2Login(oauth2 -> oauth2
+                .permitAll().userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
+                ).successHandler(authSuccessHandler
+                )
+        ).csrf(AbstractHttpConfigurer::disable
+        ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
+        ).logout(logout -> logout.permitAll().deleteCookies("AccessTOKEN").logoutSuccessHandler(
+            (request, response, authentication) -> {
+                response.setStatus(200);
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                ObjectMapper mapper = new ObjectMapper();
+                BaseResponse<String> baseResponse = new BaseResponse<>(true, "로그아웃 성공");
+                mapper.writeValue(response.getWriter(), baseResponse);
+            })
+        ).authorizeHttpRequests( // TODO: REDO request authorization
             (auth) -> auth
                     .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
                     .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("ADVANCED")
                     .anyRequest().permitAll()
         );
-        http.logout(logout -> logout.permitAll().clearAuthentication(true).invalidateHttpSession(true).logoutSuccessUrl("/api/user/logout"));
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        http.oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
-                ).permitAll().successHandler(authSuccessHandler
-                )
-        );
+        http.addFilterAt(new LoginRoutingFilter(authenticationConfiguration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class);
 
         http.exceptionHandling(ex -> ex
             .authenticationEntryPoint( (req, res, e) -> {
                 logger.info("failed to Authenticate: " + e.getMessage());
-                res.sendRedirect("/api/user/failed");
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                res.setContentType("application/json");
+                res.setCharacterEncoding("UTF-8");
+                res.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
             })
         );
 
@@ -83,9 +93,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
         corsConfig.setAllowedOrigins(List.of("https://dev.libertygame.work", "https://libertygame.work", "https://libertyga.me", "http://localhost"));
-        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        corsConfig.setAllowCredentials(true);
-
+        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
         return source;

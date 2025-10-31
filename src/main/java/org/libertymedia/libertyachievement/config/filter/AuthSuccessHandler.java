@@ -1,11 +1,10 @@
 package org.libertymedia.libertyachievement.config.filter;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletOutputStream;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.libertymedia.libertyachievement.user.UserRepository;
 
 import org.libertymedia.libertyachievement.user.model.LibertyOAuth2User;
@@ -13,19 +12,21 @@ import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
-public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
     private final UserRepository userRepository;
@@ -34,9 +35,8 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         LibertyOAuth2User authUser = (LibertyOAuth2User) authentication.getPrincipal();
-        UserInfo user = userRepository.findByUsername(authUser.getName()).orElseThrow();
         // make access token and give it to client
-        String token = JwtUtil.generateToken(user.getUserIdx(), user.getUsername(), user.getEmail(), user.getRole(), user.getNotBlocked());
+        String token = JwtUtil.generateToken(authUser.getUser().getUserIdx(), authUser.getUser().getUsername(), authUser.getUser().getEmail(), authUser.getUser().getRole(), authUser.getUser().getNotBlocked());
         // 쿠키에 토큰 설정
         ResponseCookie cookie2 = ResponseCookie
                 .from("AccessTOKEN", token)
@@ -55,7 +55,32 @@ public class AuthSuccessHandler extends SavedRequestAwareAuthenticationSuccessHa
                 .maxAge(0) // 즉시 만료
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
-        logger.info("Successfully authenticated user: {}", user.getUsername());
-        response.sendRedirect("/api/user");
+        logger.info("Successfully authenticated user: {}", authUser.getUser().getUsername());
+        // 리다이렉트 조정
+        String state = request.getParameter("state");
+        String redirectUrl = "https://libertyga.me";
+        if (state != null && !state.isEmpty()) {
+            try {
+                String decodedUrl = URLDecoder.decode(state, StandardCharsets.UTF_8);
+                if (decodedUrl.startsWith("https://dev.libertygame.work/wiki/리버티게임:도전 과제") || decodedUrl.startsWith("https://libertygame.work/wiki/리버티게임:도전 과제") || decodedUrl.startsWith("https://libertyga.me/wiki/리버티게임:도전 과제")) {
+                    redirectUrl = decodedUrl;
+                    log.info("Redirecting to original URL: {}", redirectUrl);
+                } else {
+                    log.warn("Invalid redirect URL: {}", decodedUrl);
+                }
+            } catch (Exception e) {
+                log.error("Failed to decode state parameter: {}", state, e);
+            }
+        } else {
+            log.warn("No state parameter found, using default redirect: {}", redirectUrl);
+        }
+
+        // 세션 무효화 (추가 안전 조치)
+        if (request.getSession(false) != null) {
+            request.getSession().invalidate();
+            log.info("Invalidated existing session");
+        }
+
+        response.sendRedirect(redirectUrl);
     }
 }
