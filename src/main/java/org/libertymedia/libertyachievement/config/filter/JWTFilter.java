@@ -34,8 +34,8 @@ public class JWTFilter extends OncePerRequestFilter {
     private String redirectUri;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        /*
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
+    {
         if (request.getRequestURI().equals("/login") && SecurityContextHolder.getContext().getAuthentication() == null) {
             response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+redirectUri);
             // log.info("calling doFilter...");
@@ -43,7 +43,7 @@ public class JWTFilter extends OncePerRequestFilter {
             // log.info("doFilter done");
             return;
         }
-        */
+
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             log.info("No cookies!");
