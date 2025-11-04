@@ -51,6 +51,7 @@ public class SecurityConfig {
         http.oauth2Login(oauth2 -> oauth2
                 .permitAll().userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
                 ).successHandler(authSuccessHandler)
+        ).formLogin(AbstractHttpConfigurer::disable
         ).csrf(AbstractHttpConfigurer::disable
         ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
         ).logout(logout -> logout.permitAll().deleteCookies("AccessTOKEN").logoutSuccessHandler(
