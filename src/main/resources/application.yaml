@@ -45,7 +45,7 @@ spring:
     oauth2:
       client:
         registration:
-          libertygame: # 주의: scope 없어야 함
+          libertygame: # 주의: scope 없어야 함 - 리버티게임 서버의 OAuth2 자동 grant 세팅을
             client-id: ${OAUTH_CLIENT_ID}
             client-secret: ${OAUTH_CLIENT_SECRET}
             redirect-uri: "${HOST_DOMAIN}/wiki/리버티게임:도전_과제"
