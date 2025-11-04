@@ -36,7 +36,7 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
     {
-        if (request.getRequestURI().equals("/login") && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (request.getRequestURI().startsWith("/login") && SecurityContextHolder.getContext().getAuthentication() == null) {
             response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+redirectUri);
             // log.info("calling doFilter...");
             // doFilter(request, response, filterChain);
