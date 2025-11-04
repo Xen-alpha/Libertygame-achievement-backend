@@ -77,6 +77,8 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         } else {
             log.info("no token");
+            response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+redirectUri);
+            return;
         }
 
         filterChain.doFilter(request, response);
