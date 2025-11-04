@@ -36,18 +36,22 @@ public class LibertyOAuth2UserService
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(userRequest);
+        if (oAuth2User == null) {
+            logger.error("Failed to load user: {}", userRequest.getClientRegistration().getRegistrationId());
+            return null;
+        }
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String username = (String) attributes.get("username");
         UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
-        logger.debug("loading user {}", username);
+        logger.info("loading user {}", username);
+        String email = (String) attributes.get("email");
+        Long idx = parseLong((String) attributes.get("sub"));
+        Boolean blocked = (Boolean) attributes.get("blocked");
         if (userInfo == null) {
-            String email = (String) attributes.get("email");
-            Long idx = parseLong((String) attributes.get("sub"));
-            Boolean blocked = (Boolean) attributes.get("blocked");
             return new LibertyOAuth2User(userRepository.save(UserInfo.builder().userIdx(idx).notBlocked(!blocked).username(username).email(email).role("BASIC").build()));
         } else {
-            userInfo.setEmail((String) attributes.get("email"));
-            userInfo.setNotBlocked(!((Boolean) attributes.get("blocked")));
+            userInfo.setEmail(email);
+            userInfo.setNotBlocked(!blocked);
             return new LibertyOAuth2User(userRepository.save(userInfo));
         }
     }
