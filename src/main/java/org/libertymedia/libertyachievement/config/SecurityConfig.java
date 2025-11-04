@@ -12,6 +12,8 @@ import org.libertymedia.libertyachievement.user.LibertyOAuth2UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -56,6 +58,14 @@ public class SecurityConfig {
         ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
         ).logout(logout -> logout.permitAll().deleteCookies("AccessTOKEN").logoutSuccessHandler(
             (request, response, authentication) -> {
+                ResponseCookie cookie = ResponseCookie
+                        .from("AccessTOKEN", "")
+                        .path("/") //
+                        .httpOnly(true)
+                        .secure(true)
+                        .maxAge( 0L) // 즉시 만료 처리
+                        .build();
+                response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
                 response.setStatus(200);
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
