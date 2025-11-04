@@ -39,7 +39,7 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
             }
         }
         UserInfo userInfo = JwtUtil.getUser(tokenStr);
-        loginToken = new UsernamePasswordAuthenticationToken(userInfo, null, null);
+        loginToken = new UsernamePasswordAuthenticationToken(userInfo, null, userInfo.getAuthorities());
         return authenticationManager.authenticate(loginToken);
     }
 
@@ -58,7 +58,7 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
         UserInfo userInfo = (UserInfo) auth.getPrincipal();
         String jwt = JwtUtil.generateToken(userInfo.getUserIdx(), userInfo.getUsername(), userInfo.getEmail(), userInfo.getRole(), userInfo.getNotBlocked());
         logger.info("Success in UsernamePasswordFilter Auth.");
-        ResponseCookie cookie = ResponseCookie.from("ATOKEN", jwt)
+        ResponseCookie cookie = ResponseCookie.from("AccessTOKEN", jwt)
                 .path("/")
                 .httpOnly(true)
                 .secure(true)
