@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-@Deprecated
 @Component
 @RequiredArgsConstructor
 public class AuthFailHandler implements AuthenticationFailureHandler {
@@ -20,9 +19,11 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        logger.debug("OAuth2 failure: ", exception);
+        logger.debug("OAuth2 failure: {}", exception.getMessage());
+        exception.printStackTrace();
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.getWriter().write("{ \"error\": \"OAuth2 login failed: " + exception.getMessage() + "\" }");
     }
 }

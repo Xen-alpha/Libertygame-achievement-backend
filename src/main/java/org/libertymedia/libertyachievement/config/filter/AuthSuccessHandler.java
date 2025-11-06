@@ -62,7 +62,7 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         if (state != null && !state.isEmpty()) {
             try {
                 String decodedUrl = URLDecoder.decode(state, StandardCharsets.UTF_8);
-                if (decodedUrl.startsWith("https://dev.libertygame.work/wiki/리버티게임:도전 과제") || decodedUrl.startsWith("https://libertygame.work/wiki/리버티게임:도전 과제") || decodedUrl.startsWith("https://libertyga.me/wiki/리버티게임:도전 과제")) {
+                if (decodedUrl.startsWith("https://dev.libertygame.work/wiki/리버티게임:도전_과제") || decodedUrl.startsWith("https://libertygame.work/wiki/리버티게임:도전_과제") || decodedUrl.startsWith("https://libertyga.me/wiki/리버티게임:도전_과제")) {
                     redirectUrl = decodedUrl;
                     log.info("Redirecting to original URL: {}", redirectUrl);
                 } else {
