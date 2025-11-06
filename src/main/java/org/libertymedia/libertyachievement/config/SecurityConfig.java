@@ -31,6 +31,9 @@ import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -51,8 +54,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http, AuthFailHandler authFailHandler) throws Exception { // 세션 방식 로그인
         http.oauth2Login(oauth2 -> oauth2
-                .permitAll().loginPage("/login").userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
-                ).successHandler(authSuccessHandler)
+                .permitAll().loginPage("/login")
+                .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
+                ).redirectionEndpoint(endpoint -> endpoint.baseUri(URLEncoder.encode("/wiki/리버티게임:도전_과제", StandardCharsets.UTF_8)))
+                .successHandler(authSuccessHandler)
                 .failureHandler(authFailHandler)
         ).formLogin(AbstractHttpConfigurer::disable
         ).csrf(AbstractHttpConfigurer::disable
