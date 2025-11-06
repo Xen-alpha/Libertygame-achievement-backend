@@ -57,24 +57,8 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", authUser.getUser().getUsername());
         // 리다이렉트 조정
-        String state = request.getParameter("state");
-        String redirectUrl = "https://libertyga.me";
-        if (state != null && !state.isEmpty()) {
-            try {
-                String decodedUrl = URLDecoder.decode(state, StandardCharsets.UTF_8);
-                if (decodedUrl.startsWith("https://dev.libertygame.work/wiki/리버티게임:도전_과제") || decodedUrl.startsWith("https://libertygame.work/wiki/리버티게임:도전_과제") || decodedUrl.startsWith("https://libertyga.me/wiki/리버티게임:도전_과제")) {
-                    redirectUrl = decodedUrl;
-                    log.info("Redirecting to original URL: {}", redirectUrl);
-                } else {
-                    log.warn("Invalid redirect URL: {}", decodedUrl);
-                }
-            } catch (Exception e) {
-                log.error("Failed to decode state parameter: {}", state, e);
-            }
-        } else {
-            log.warn("No state parameter found, using default redirect: {}", redirectUrl);
-        }
-
-        response.sendRedirect(redirectUrl);
+        String state = request.getParameter("state"); // Note:  지금 request 쿼리엔 accessToken과 state 파라미터밖에 없는 상황이다.
+        logger.info("state: {}", state);
+        //response.sendRedirect(redirectUrl);
     }
 }

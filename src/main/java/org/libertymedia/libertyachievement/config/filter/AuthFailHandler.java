@@ -20,7 +20,8 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         logger.debug("OAuth2 failure: {}", exception.getMessage());
-        exception.printStackTrace();
+        logger.debug("State parameter of this failure request : {}", request.getParameter("state"));
+        logger.info("AccessToken parameter of this failure request : {}", request.getParameter("accessToken"));
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
