@@ -32,6 +32,9 @@ public class JWTFilter extends OncePerRequestFilter {
     @Value("${OAUTH_CLIENT_ID}")
     private String value;
 
+    @Value("${HOST_DOMAIN}")
+    private String host;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
     {
@@ -76,7 +79,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         } else {
             log.info("no token");
-            response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+ URLEncoder.encode(request.getServletPath() + "/wiki/리버티게임:도전 과제", StandardCharsets.UTF_8));
+            response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+ URLEncoder.encode(host + "/wiki/리버티게임:도전 과제", StandardCharsets.UTF_8));
         }
 
         filterChain.doFilter(request, response);
