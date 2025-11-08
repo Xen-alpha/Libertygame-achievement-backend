@@ -54,7 +54,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http, AuthFailHandler authFailHandler) throws Exception { // 세션 방식 로그인
         http.oauth2Login(oauth2 -> oauth2
-                .permitAll().loginPage("/api/login/achievement")
+                .permitAll()
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService))
                 .successHandler(authSuccessHandler)
                 .failureHandler(authFailHandler)
