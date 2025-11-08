@@ -54,7 +54,7 @@ public class JwtUtil {
         claims.put("userEmail", userEmail);
         claims.put("userName", userName);
         claims.put("userIdx", userIdx);
-        claims.put("role", "ROLE_" + role);
+        claims.put("role", role);
         claims.put("notBlocked", notBlocked);
         String token = Jwts.builder()
                 .setClaims(claims)
