@@ -8,10 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.libertymedia.libertyachievement.user.UserRepository;
 
 import org.libertymedia.libertyachievement.user.model.LibertyOAuth2User;
-import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
@@ -20,7 +20,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Slf4j
@@ -30,6 +30,9 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
     private final UserRepository userRepository;
+
+    @Value("${OAUTH_HOST}")
+    private String host;
 
     // OAuth2가 성공했을 때의 행동: OAuth2 과정 도중 아직 도전과제 사용하지 않은 사용자면 서비스의 loadUser 과정에서 DB에 UserInfo 정보가 생성되므로 컨트롤러에 정의된 API로 리다이렉트
     @Override
@@ -57,8 +60,6 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         response.addHeader(HttpHeaders.SET_COOKIE, jsessionIdCookie.toString());
         logger.info("Successfully authenticated user: {}", authUser.getUser().getUsername());
         // 리다이렉트 조정
-        String state = request.getParameter("state"); // Note:  지금 request 쿼리엔 accessToken과 state 파라미터밖에 없는 상황이다.
-        logger.info("state: {}", state);
-        //response.sendRedirect(redirectUrl);
+        response.sendRedirect( "https://" + host + "/wiki/"+ URLEncoder.encode("리버티게임:도전_과제", StandardCharsets.UTF_8));
     }
 }
