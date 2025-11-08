@@ -41,6 +41,11 @@ public class LibertyOAuth2UserService
             return null;
         }
         Map<String, Object> attributes = oAuth2User.getAttributes();
+        for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue().toString();
+            logger.info("key {} has value {}", key, value);
+        }
         String username = (String) attributes.get("username");
         UserInfo userInfo = userRepository.findByUsername(username).orElse(null);
         logger.info("loading user {}", username);
