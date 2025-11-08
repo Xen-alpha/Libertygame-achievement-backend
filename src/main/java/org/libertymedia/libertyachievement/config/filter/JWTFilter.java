@@ -70,7 +70,6 @@ public class JWTFilter extends OncePerRequestFilter {
         } else {
             log.info("no token");
         }
-
         filterChain.doFilter(request, response);
     }
 

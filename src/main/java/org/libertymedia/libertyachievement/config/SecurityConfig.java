@@ -28,6 +28,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -58,10 +59,10 @@ public class SecurityConfig {
                 .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService))
                 .successHandler(authSuccessHandler)
                 .failureHandler(authFailHandler)
-        ).formLogin(AbstractHttpConfigurer::disable
-        ).csrf(AbstractHttpConfigurer::disable
+        ).formLogin(AbstractHttpConfigurer::disable // form POST 안 써요
+        ).csrf(AbstractHttpConfigurer::disable // cross site resource 요청이 무조건 필요하고, 세션 쿠키 탈취 가능성은 도전 과제 서버에 없다.
         ).sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS) // v0.5.3에서 난 결론: 세션 아닌 JWT 인증이어야 도전과제 서버가 본 서버와 양립 가능한 것으로 결론을 내림
-        ).logout(logout -> logout.permitAll().invalidateHttpSession(true).deleteCookies("AccessTOKEN", "JSESSIONID").logoutSuccessHandler(
+        ).logout(logout -> logout.permitAll().clearAuthentication(true).invalidateHttpSession(true).deleteCookies("AccessTOKEN", "JSESSIONID").logoutSuccessHandler(
             (request, response, authentication) -> {
                 response.setStatus(200);
                 response.setContentType("application/json");
