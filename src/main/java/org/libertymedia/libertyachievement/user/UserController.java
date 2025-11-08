@@ -1,14 +1,9 @@
 package org.libertymedia.libertyachievement.user;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.libertymedia.libertyachievement.user.model.UserInfo;
 import org.libertymedia.libertyachievement.user.model.request.PromotionRequest;
-import org.libertymedia.libertyachievement.user.model.response.TokenResponse;
-import org.libertymedia.libertyachievement.util.JwtUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -25,30 +20,6 @@ public class UserController {
         return ResponseEntity.ok("등록 완료.");
     }
 
-    /*
-    @Operation(description="로그인 실패 리다이렉션")
-    @PostMapping("/failed")
-    public ResponseEntity<String> failedAuthentication() {
-        return ResponseEntity.ok("인증 실패로 리다이렉트");
-    }
-
-    @Deprecated
-    @Operation(description="리프레시 토큰으로 AccessToken 발급해서 리턴")
-    @PostMapping("/issue")
-    public ResponseEntity<TokenResponse> refresh(@CookieValue("RefreshTOKEN") String refresh) {
-        UserInfo userInfo = JwtUtil.getUser(refresh); // 유효성 검사 + 블랙리스트/DB 확인(선택)
-        if (userInfo == null) return ResponseEntity.badRequest().body(new TokenResponse("Failed"));
-        String value = userService.getNewToken(refresh);
-        if (value == null) return ResponseEntity.badRequest().body(new TokenResponse("Failed"));
-        return ResponseEntity.ok().header("Authorization", value).body(new TokenResponse(value));
-    }
-
-    @Operation(description="로그아웃 리다이렉션")
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request) {
-        return ResponseEntity.ok("도전과제 서버 로그아웃 완료");
-    }
-    */
     @Operation(description="도전과제 제작자로 승급하는 요청을 테이블에 저장합니다.")
     @PostMapping("/promote")
     public ResponseEntity<String> promote(@AuthenticationPrincipal UserInfo user, @RequestBody PromotionRequest request) {

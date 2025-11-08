@@ -19,8 +19,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
-import java.util.Objects;
 
+@Deprecated(since="사용 가능성이 없어짐")
 @RequiredArgsConstructor
 public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
     private final Logger logger = LoggerFactory.getLogger(LoginRoutingFilter.class);
@@ -39,7 +39,7 @@ public class LoginRoutingFilter extends UsernamePasswordAuthenticationFilter {
             }
         }
         UserInfo userInfo = JwtUtil.getUser(tokenStr);
-        loginToken = new UsernamePasswordAuthenticationToken(userInfo, null, userInfo.getAuthorities());
+        loginToken = new UsernamePasswordAuthenticationToken(userInfo, null, null);
         return authenticationManager.authenticate(loginToken);
     }
 

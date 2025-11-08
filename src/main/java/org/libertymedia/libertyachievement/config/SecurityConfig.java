@@ -9,36 +9,25 @@ import org.libertymedia.libertyachievement.config.filter.AuthSuccessHandler;
 import org.libertymedia.libertyachievement.config.filter.JWTFilter;
 import org.libertymedia.libertyachievement.config.filter.LoginRoutingFilter;
 import org.libertymedia.libertyachievement.user.LibertyOAuth2UserService;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import org.springframework.security.web.authentication.logout.LogoutFilter;
-import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -48,7 +37,6 @@ public class SecurityConfig {
     private final LibertyOAuth2UserService userService;
     private final JWTFilter jwtFilter;
     private final AuthSuccessHandler authSuccessHandler;
-    // private final AuthFailHandler authFailHandler;
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
 
@@ -73,11 +61,13 @@ public class SecurityConfig {
             })
         ).authorizeHttpRequests( // TODO: REDO request authorization
             (auth) -> auth
+                    .requestMatchers("/login", "/logout").permitAll()
                     .requestMatchers("/achievement/v1/achieve", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("BASIC")
                     .requestMatchers("/achievement/v1/achieve","/achievement/v1/addition","/achievement/v1/deletion", "/achievement/v1/edit", "/achievement/v1/rate","/achievement/v1/talk", "/achievement/v1/file", "/achievement/v1/game/**").hasRole("ADVANCED")
                     .anyRequest().permitAll()
         );
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+        // TODO: 아래 커스텀 로그인 필터는 이제 필요 없을 수도 있다.
         http.addFilterAt(new LoginRoutingFilter(authenticationConfiguration.getAuthenticationManager()), UsernamePasswordAuthenticationFilter.class);
 
         http.exceptionHandling(ex -> ex

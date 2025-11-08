@@ -19,10 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import org.libertymedia.libertyachievement.util.JwtUtil;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-
 
 @Component
 @RequiredArgsConstructor
@@ -58,8 +55,9 @@ public class JWTFilter extends OncePerRequestFilter {
             try {
                 UserInfo user = JwtUtil.getUser(token);
                 if (user != null) {
-                    UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, user.getAuthorities());
+                    UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole())));
                     identityToken.setDetails(user);
+                    identityToken.setAuthenticated(true);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
                     log.info("pass jwt filter");
                 }
