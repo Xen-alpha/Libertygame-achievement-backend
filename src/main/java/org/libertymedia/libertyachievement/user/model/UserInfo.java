@@ -30,9 +30,11 @@ public class UserInfo implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_BASIC");
-        authorities.add(authority);
-        if (role.equals("ADVANCED")) {
+        if (role.equals("BASIC")) {
+            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_BASIC");
+            authorities.add(authority);
+        }
+        else if (role.equals("ADVANCED")) {
             authorities.add(new SimpleGrantedAuthority("ROLE_ADVANCED"));
         }
         return authorities;
