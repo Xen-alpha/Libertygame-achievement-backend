@@ -51,8 +51,6 @@ public class JWTFilter extends OncePerRequestFilter {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             log.info("No cookies!");
-            doFilter(request, response, filterChain);
-            return;
         }
         String token = null;
         for (Cookie cookie : cookies) {
@@ -74,12 +72,12 @@ public class JWTFilter extends OncePerRequestFilter {
                     log.info("pass jwt filter");
                 }
             } catch (JwtException e) {
-                // do nothing: continue to OAuth2
+                // continue to OAuth2
                 log.info("failed to parse token");
             }
         } else {
             log.info("no token");
-            response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+ host + URLEncoder.encode( "/wiki/리버티게임:도전_과제", StandardCharsets.UTF_8));
+            return; // 필요한가?
         }
 
         filterChain.doFilter(request, response);

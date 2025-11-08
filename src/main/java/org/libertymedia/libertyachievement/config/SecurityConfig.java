@@ -55,8 +55,7 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http, AuthFailHandler authFailHandler) throws Exception { // 세션 방식 로그인
         http.oauth2Login(oauth2 -> oauth2
                 .permitAll().loginPage("/login")
-                .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService)
-                ).redirectionEndpoint(endpoint -> endpoint.baseUri(URLEncoder.encode("/wiki/리버티게임:도전_과제", StandardCharsets.UTF_8)))
+                .userInfoEndpoint(userInfoEP -> userInfoEP.userService(userService))
                 .successHandler(authSuccessHandler)
                 .failureHandler(authFailHandler)
         ).formLogin(AbstractHttpConfigurer::disable
