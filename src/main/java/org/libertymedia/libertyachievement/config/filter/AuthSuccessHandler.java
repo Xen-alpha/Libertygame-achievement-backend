@@ -31,7 +31,7 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
     private final UserRepository userRepository;
 
-    @Value("${OAUTH_HOST}")
+    @Value("${HOST_OAUTH}")
     private String host;
 
     // OAuth2가 성공했을 때의 행동: OAuth2 과정 도중 아직 도전과제 사용하지 않은 사용자면 서비스의 loadUser 과정에서 DB에 UserInfo 정보가 생성되므로 컨트롤러에 정의된 API로 리다이렉트
