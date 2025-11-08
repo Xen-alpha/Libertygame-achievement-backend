@@ -22,15 +22,6 @@ public class AuthFailHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         logger.debug("OAuth2 failure: {}", exception.getMessage());
-        // 쿠키에 토큰 설정
-        ResponseCookie deletedCookie = ResponseCookie
-                .from("AccessTOKEN", "")
-                .path("/") //
-                .httpOnly(true)
-                .secure(true)
-                .maxAge( 0L) // 180일
-                .build();
-        response.addHeader(HttpHeaders.SET_COOKIE, deletedCookie.toString());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
