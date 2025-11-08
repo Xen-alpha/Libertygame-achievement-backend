@@ -5,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.libertymedia.libertyachievement.user.UserRepository;
 
 import org.libertymedia.libertyachievement.user.model.LibertyOAuth2User;
 import org.libertymedia.libertyachievement.util.JwtUtil;
@@ -29,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final Logger logger = LoggerFactory.getLogger(AuthSuccessHandler.class);
-    private final UserRepository userRepository;
 
     @Value("${HOST_OAUTH}")
     private String host;
@@ -39,6 +37,7 @@ public class AuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         LibertyOAuth2User authUser = (LibertyOAuth2User) authentication.getPrincipal();
         // make access token and give it to client
+
         String token = JwtUtil.generateToken(authUser.getUser().getUserIdx(), authUser.getUser().getUsername(), authUser.getUser().getEmail(), authUser.getUser().getRole(), authUser.getUser().getNotBlocked());
         // 쿠키에 토큰 설정
         ResponseCookie cookie2 = ResponseCookie
