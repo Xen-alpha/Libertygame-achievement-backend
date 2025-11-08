@@ -55,9 +55,8 @@ public class JWTFilter extends OncePerRequestFilter {
             try {
                 UserInfo user = JwtUtil.getUser(token);
                 if (user != null) {
-                    UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken(user.getUsername(), null, List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole())));
+                    UsernamePasswordAuthenticationToken identityToken = new UsernamePasswordAuthenticationToken( user, null, List.of(new SimpleGrantedAuthority("ROLE_"+user.getRole())));
                     identityToken.setDetails(user);
-                    identityToken.setAuthenticated(true);
                     SecurityContextHolder.getContext().setAuthentication(identityToken);
                     log.info("pass jwt filter");
                 }
