@@ -97,11 +97,16 @@ public class AchievementService {
         List<AchievementResponse> result = new ArrayList<>();
         for (Achievement achievement : targets) {
             Progress progress = progressRepository.findByAchievementAndUser(achievement, user);
-            if (progress.getCurrentProgress() >= achievement.getMaxProgress()) {
-                continue;
+            if (progress == null) {
+                progress = Progress.builder().achievement(achievement).currentProgress(1).user(user).build();
+                progressRepository.save(progress);
+            } else {
+                if (progress.getCurrentProgress() >= achievement.getMaxProgress()) {
+                    continue;
+                }
+                progress.setCurrentProgress(progress.getCurrentProgress() + 1);
+                progressRepository.save(progress);
             }
-            progress.setCurrentProgress(progress.getCurrentProgress() + 1);
-            progressRepository.save(progress);
             result.add(AchievementResponse.from(achievement,progress));
         }
         return result;
