@@ -38,19 +38,11 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
     {
-        /*
-        if (request.getRequestURI().startsWith("/login") && SecurityContextHolder.getContext().getAuthentication() == null) {
-            response.sendRedirect("/rest.php/oauth2/authorize?client_id=" +value + "&response_type=code&redirect_uri="+redirectUri);
-            // log.info("calling doFilter...");
-            // doFilter(request, response, filterChain);
-            // log.info("doFilter done");
-            return;
-        }
-        */
-
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {
             log.info("No cookies!");
+            filterChain.doFilter(request,response);
+            return;
         }
         String token = null;
         for (Cookie cookie : cookies) {
@@ -77,7 +69,6 @@ public class JWTFilter extends OncePerRequestFilter {
             }
         } else {
             log.info("no token");
-            return; // 필요한가?
         }
 
         filterChain.doFilter(request, response);
