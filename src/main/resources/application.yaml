@@ -48,9 +48,9 @@ spring:
           libertygame: # 주의: scope 없어야 함 - 리버티게임 서버의 OAuth2 자동 grant 세팅을
             client-id: ${OAUTH_CLIENT_ID}
             client-secret: ${OAUTH_CLIENT_SECRET}
-            redirect-uri: ${HOST_DOMAIN}
             authorization-grant-type: authorization_code
-            client-authentication-method: client_secret_post
+            redirect-uri : ${HOST_DOMAIN}
+            client-authentication-method: client_secret_basic
             provider: libertygame
         provider:
           libertygame:
