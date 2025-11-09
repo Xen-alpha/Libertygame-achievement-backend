@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class QueryItemResponse {
+    private Long idx;
     private String title;
     private String description;
     private Integer progress;
