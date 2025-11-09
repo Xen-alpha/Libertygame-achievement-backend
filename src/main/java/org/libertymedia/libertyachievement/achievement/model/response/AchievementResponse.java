@@ -12,12 +12,13 @@ import org.libertymedia.libertyachievement.achievement.model.Progress;
 @Getter
 @Builder
 public class AchievementResponse {
+    private Long idx;
     private String title;
     private String description;
     private Integer progress;
     private Integer maxprogress;
 
     public static AchievementResponse from(Achievement achievement, Progress progress) {
-        return AchievementResponse.builder().title(achievement.getAtitle()).description(achievement.getAdescription()).progress(progress.getCurrentProgress()).maxprogress(achievement.getMaxProgress()).build();
+        return AchievementResponse.builder().idx(achievement.getIdx()).title(achievement.getAtitle()).description(achievement.getAdescription()).progress(progress.getCurrentProgress()).maxprogress(achievement.getMaxProgress()).build();
     }
 }

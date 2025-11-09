@@ -48,7 +48,7 @@ public class AchievementService {
         List<QueryItemResponse> result = new ArrayList<>();
         for (Progress progressEntity : progressEntities) {
             Achievement achievement = progressEntity.getAchievement();
-            QueryItemResponse queryItemResponse = QueryItemResponse.builder()
+            QueryItemResponse queryItemResponse = QueryItemResponse.builder().idx(achievement.getIdx())
                     .title(achievement.getAtitle()).description(achievement.getAdescription())
                     .maxprogress(achievement.getMaxProgress())
                     .progress(progressEntity.getCurrentProgress())
@@ -77,7 +77,7 @@ public class AchievementService {
                 progressRepository.save(progress);
             }
         }
-        return AchievementResponse.builder().title(achievement.getAtitle())
+        return AchievementResponse.builder().idx(achievement.getIdx()).title(achievement.getAtitle())
                 .description(achievement.getAdescription()).progress(progress.getCurrentProgress())
                 .maxprogress(achievement.getMaxProgress()).build();
 
