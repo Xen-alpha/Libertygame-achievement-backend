@@ -49,7 +49,7 @@ public class AchievementServiceTest {
         );
         when(userRepository.findByUsername("Senouis")).thenReturn(Optional.of(UserInfo.builder().idx(1L).userIdx(3L).username("Senouis").role( "BASIC").build()));
         when(progressRepository.findByAchievementAndUser(achievementRepository.findByGameName("RPG in City").get(0), userRepository.findByUsername("Senouis").orElse(null))).thenReturn(
-                Progress.builder().currentProgress(1).build()
+                Optional.ofNullable(Progress.builder().currentProgress(1).build())
         );
         // test edit
         // test rate
