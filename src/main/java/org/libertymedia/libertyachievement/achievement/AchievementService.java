@@ -31,10 +31,21 @@ public class AchievementService {
         if (user == null) {
             throw new IllegalArgumentException("Wrong Creator name.");
         }
-        Achievement achievement = achievementRepository.save(Achievement.builder().atitle(request.getTitle())
-                .adescription(request.getDescription())
-                .maxProgress(request.getMaxProgress())
-                .build());
+        // 이 사용자가 이미 10개 이상의 도전과제를 제출했는지 확인
+        List<Achievement> userSubmissions= achievementRepository.findByCreatedBy(user.getUsername());
+        if (userSubmissions.size() >= 10) {
+            throw new IllegalArgumentException("Too many submissions.");
+        }
+        // 그 다음, 이미 제출된 제목의 항목인지 확인
+        Achievement achievement = achievementRepository.findByAtitle(request.getTitle()).orElse(null);
+        if (achievement == null) { // 없으니까 생성
+            achievement = achievementRepository.save(Achievement.builder().atitle(request.getTitle())
+                    .adescription(request.getDescription())
+                    .maxProgress(request.getMaxProgress())
+                    .build());
+        } else {
+            throw new IllegalArgumentException("Achievement already exists.");
+        }
         return achievement.getAtitle();
     }
 
