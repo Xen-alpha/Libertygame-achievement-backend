@@ -78,7 +78,7 @@ public class AchievementService {
         if (achievement == null || user == null) {
             throw new RuntimeException("Cannot make achievement progress");
         }
-        Progress progress = progressRepository.findByAchievementAndUser(achievement, user);
+        Progress progress = progressRepository.findByAchievementAndUser(achievement, user).orElse(null);
         if (progress == null) {
             progress = Progress.builder().achievement(achievement).currentProgress(1).user(user).build();
             progressRepository.save(progress);
@@ -107,7 +107,7 @@ public class AchievementService {
         UserInfo user = userRepository.findByUsername(username).orElseThrow();
         List<AchievementResponse> result = new ArrayList<>();
         for (Achievement achievement : targets) {
-            Progress progress = progressRepository.findByAchievementAndUser(achievement, user);
+            Progress progress = progressRepository.findByAchievementAndUser(achievement, user).orElse(null);
             if (progress == null) {
                 progress = Progress.builder().achievement(achievement).currentProgress(1).user(user).build();
                 progressRepository.save(progress);
@@ -151,8 +151,8 @@ public class AchievementService {
             return result;
         }
         for (Achievement achievement : targets) {
-            Progress progress = progressRepository.findByAchievementAndUser(achievement, user);
-            result.add(AchievementResponse.from(achievement,progress));
+            Progress progress = progressRepository.findByAchievementAndUser(achievement, user).orElse(null);
+            if (progress != null) result.add(AchievementResponse.from(achievement,progress));
         }
         return result;
     }
