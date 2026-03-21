@@ -20,9 +20,9 @@ spring:
     dispatch-options-request: true
   datasource:
     url: jdbc:oracle:thin:@achievement_high?TNS_ADMIN=${WALLET_PATH}
-    driver-class-name: oracle.jdbc.OracleDriver
     username: ${ORACLE_USERNAME}
     password: ${ORACLE_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
       ddl-auto: none
